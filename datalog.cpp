@@ -20,10 +20,14 @@ void delay(int ms) {
 }
 
 // function for writing data to a csv file
-void write_csv(string filename, string colname) {
+void write_csv(string filename, char* time, int temp, int pressure, double raw) {
     ofstream output;
-    output.open(filename);
-    
+    output.open(filename, ios::app);
+    for(int i = 0; i < 24; i++) {
+        output << time[i];
+    }
+    output << "," << temp << "," << pressure << "," << raw << "\n";
+    output.close();
 }
 
 // function for writing individual data values to a csv file
@@ -384,11 +388,10 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
             req_time(&time);
             req_temp(device_data, chI, chO, out_freq, sample_rate, &temp, &disp);
             req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, disp);
-            if(disp == 1) {
-                t = asctime(time);
-                t[24] = '\0';
-                printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV\n", t, temp, pressure, raw);
-            }
+            t = asctime(time);
+            t[24] = '\0';
+            printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV\n", t, temp, pressure, raw);
+            write_csv(filename, t, temp, pressure, raw);
         }
         else if (i == 0) {
             printf("Starting Logging. \n");

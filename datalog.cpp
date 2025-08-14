@@ -166,7 +166,7 @@ void rewrap(uint8_t *data, int n, uint8_t **nums) {
 }
 
 // analog pressure conversion function
-void convert_to_pressure(double *voltages, double measurement, int *n, int *pressure) {
+void convert_to_pressure(double *voltages, double measurement, int *n, int *pressure, double *raw) {
     // fill the voltages array with measurements
     if(*n < 1000) {
         voltages[*n] = measurement;
@@ -186,10 +186,11 @@ void convert_to_pressure(double *voltages, double measurement, int *n, int *pres
         sum += voltages[i];
     }
     *pressure = round((sum/(*n)*6.37-9.76));
+    *raw = (sum/(*n));
 
 }
 
-void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, unsigned short *data) {
+void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, unsigned short *data, int *disp) {
     
     // create message to send
     uint8_t msg[8] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};  // 0x04, 0x30, 0x30, 0x31, 0x31, 0x50, 0x56, 0x05
@@ -273,6 +274,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     FDwfDigitalOutConfigure(device_data->handle, 1);
     vector<unsigned short> input = logic.record(device_data, chI);
 
+    *disp = 0;
     for(int i = 0; i < input.size()/10; i++) {
         uint16_t test_num = 0;
         for(int j = 0; j < 10; j++) {
@@ -287,6 +289,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
         if(rec == 1) {
             //printf("Current askye: %u\n", askye[test_num]);
             if (i == 8) {
+                *disp = 1;
                 printf("Current temperature: %u C\n", temp);
                 rec = 0;
                 temp = 0;
@@ -304,7 +307,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     free(send);
 }
 
-void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp) {
+void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *voltages, int *n, int disp) {
     // get maximum buffer / minimum buffer sizes, else check for errors 
     int max_buf;
     int min_buf;
@@ -315,16 +318,14 @@ void req_press(Device::Data *device_data, int chI, double sample_rate, double of
     // set analog input triggering
     scope.trigger(device_data, 1, scope.trigger_source.analog, chI, 0);
 
-    double voltages[1000];
-    for(int i = 0; i < 1000; i++) {
-        voltages[i] = 0;
-    }
-    int n = 0;
     int pressure;
+    double raw;
     double measurement = scope.measure(device_data, 1) * 1000;
-    convert_to_pressure(voltages, measurement, &n, &pressure);
-    printf("Pressure: %d bar \n", pressure); // display read measurements
-
+    convert_to_pressure(voltages, measurement, n, &pressure, &raw);
+    if (disp == 1) {
+        printf("Pressure: %d bar, Raw: %lf mV\n", pressure, raw); // display read measurements
+    }
+    
 }
 
 // function for logging thermocouple voltage data (timestamp log not implemented yet but will be once this code actually works)
@@ -365,15 +366,20 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     // query temperature controller for data
     write_csv_head(filename, "Thermocouple Voltage (mV)");
     unsigned short data[1];
-    int preset = 5;
-    while(1) {
-        req_temp(device_data, chI, chO, out_freq, sample_rate, data);
-        if(preset == 0) {
-            req_press(device_data, achI, asr, offset, amp);
+    
+    //req_press related presets
+    double voltages[1000];
+    for(int i = 0; i < 1000; i++) {
+        voltages[i] = 0;
+    }
+    int n = 0;
+    int disp;
+
+    for(int i = 30; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
+        if(i < 0) {
+            req_temp(device_data, chI, chO, out_freq, sample_rate, data, &disp);
+            req_press(device_data, achI, asr, offset, amp, voltages, &n, disp);
         }
-        else {
-            preset--;
-        } 
         delay(del);
     }
 

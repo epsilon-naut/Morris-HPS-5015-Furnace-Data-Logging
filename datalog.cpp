@@ -20,29 +20,20 @@ void delay(int ms) {
 }
 
 // function for writing data to a csv file
-void write_csv(string filename, string colname, vector<double> measurements) {
+void write_csv(string filename, string colname) {
     ofstream output;
     output.open(filename);
-    output << colname << "\n";
-    for(int i = 0; i < measurements.size(); i++) {
-        output << measurements.at(i) << "\n";
+    
+}
+
+// function for writing individual data values to a csv file
+void write_csv_head(string filename, string *colnames, int size) {
+    ofstream output;
+    output.open(filename);
+    for(int i = 0; i < size-1; i++) {
+        output << colnames[i] << ",";
     }
-    output.close();
-}
-
-// function for writing individual data values to a csv file
-void write_csv_indiv(string filename, double measurement) {
-    ofstream output;
-    output.open(filename, ios::app);
-    output << measurement << "\n";
-    output.close();
-}
-
-// function for writing individual data values to a csv file
-void write_csv_head(string filename, string colname) {
-    ofstream output;
-    output.open(filename);
-    output << colname << "\n";
+    output << colnames[size-1] << "\n";
     output.close();
 }
 
@@ -368,7 +359,8 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     scope.open(device_data, sample_rate, max_buf, offset, amp);
     
     //csv initialize
-    write_csv_head(filename, "Thermocouple Voltage (mV)");
+    string colnames[4] = {"Time", "Temperature (C)", "Pressure (bar)", "Analog Pressure Voltage (mV)"};
+    write_csv_head(filename, colnames, 4);
 
     // time related variables
     struct tm *time;
@@ -395,8 +387,11 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
             if(disp == 1) {
                 t = asctime(time);
                 t[24] = '\0';
-                printf("Time: %s, Temperature: %d C, Turrent pressure: %d bar, APV: %lf mV\n", t, temp, pressure, raw);
+                printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV\n", t, temp, pressure, raw);
             }
+        }
+        else if (i == 0) {
+            printf("Starting Logging. \n");
         }
         delay(del);
     }

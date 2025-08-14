@@ -17,24 +17,9 @@ int main(void) {
     int chI = 7; // pin 3
     int chO = 6; // pin 4
 
-    printf("ch1\n");
+    printf("Starting Logging.\n");
 
     datalog(name, config, out_freq, in_freq, chI, chO, 1, "wtf.csv");
-    /*
-    uint8_t n = 8;
-    uint8_t sample[n] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};
-    uint8_t *res;
-    uint8_t *debug;
-    rewrap(sample, n, &res, &debug);
-    for(int j = 0; j < n; j++) {
-        for(int i = 0; i < 10; i++) {
-            printf("%01x", debug[i+j*10]);
-        }
-        printf(", ");
-        printf("%02x\n", res[j]);
-    }
-    printf("%02x\n", res[8]);
-    printf("%02x\n", res[9]);
-    */
+
    return 0;
 }

@@ -51,26 +51,6 @@ using namespace std;
 #define Y 0x59
 #define Z 0x5A
 
-void delay(int ms);
-
-void write_csv(string filename, string colname, vector<double> measurements);
-
-void write_csv_indiv(string filename, double measurement);
-
-void write_csv_head(string filename, string colname);
-
-void read_thermocouple_data(string filename, vector<double> arr);
-
-void convert_to_temperature(double *voltage, vector<double> arr, int *temperature);
-
-uint16_t wrap(uint8_t data);
-
-uint16_t wrap2(uint8_t data);
-
-void reverse(uint8_t *data, int n, uint8_t **nums, uint8_t **debug);
-
-void rewrap(uint8_t *data, int n, uint8_t **nums, uint8_t **debug);
-
 void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, string filename);
 
 #endif

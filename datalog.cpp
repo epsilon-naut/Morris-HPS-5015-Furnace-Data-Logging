@@ -68,8 +68,8 @@ uint16_t wrap2(uint8_t data) {
     return 512+copy*2+(count%2)*256;
 }
 
-void reverse(uint8_t *data, int n, uint8_t **nums, uint8_t **debug) {
-    uint8_t *arr = (uint8_t *)malloc(n*10);
+void reverse(uint8_t *data, int n, uint8_t **nums) {
+    uint8_t arr[n*10];
 
     // index from last to first, wrap the message and store it into individual bits, LSB first
     for(int i = 0; i < n; i++) {
@@ -111,12 +111,11 @@ void reverse(uint8_t *data, int n, uint8_t **nums, uint8_t **debug) {
 
     // store output
     *nums = res;
-    *debug = arr;
 
 }
 
-void rewrap(uint8_t *data, int n, uint8_t **nums, uint8_t **debug) {
-    uint8_t *arr = (uint8_t *)malloc(n*10);
+void rewrap(uint8_t *data, int n, uint8_t **nums) {
+    uint8_t arr[n*10];
 
     // index from last to first, wrap the message and store it into individual bits, LSB first
     for(int i = 0; i < n; i++) {
@@ -134,7 +133,7 @@ void rewrap(uint8_t *data, int n, uint8_t **nums, uint8_t **debug) {
     }
 
     //  repackage bits into bytes for output
-    uint8_t *res = (uint8_t *)malloc(int(n*5/4)+1);
+    uint8_t res[int(n*5/4)+1];
     uint8_t *ult = (uint8_t *)malloc(int(n*5/4)+3);
     uint8_t pos = 0;
     for(int i = 10 * n - 8; i > -1; i -= 8) {
@@ -164,7 +163,6 @@ void rewrap(uint8_t *data, int n, uint8_t **nums, uint8_t **debug) {
     } 
     // store output
     *nums = ult;
-    *debug = arr;
 }
 
 // analog pressure conversion function
@@ -195,25 +193,15 @@ void req_data(Device::Data *device_data, int chI, int chO, double freq, double s
     
     // create message to send
     uint8_t msg[8] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};  // 0x04, 0x30, 0x30, 0x31, 0x31, 0x50, 0x56, 0x05
-    uint8_t msg2[8] = {ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO}; // debug message
     uint8_t idle[1] = {0xFF};
     uint8_t *send;
-    uint8_t *garbage;
-    uint8_t *debug;
-    rewrap(msg, 8, &send, &debug);
-
-    uint8_t send2[10] = {0x20, 0x33, 0xc8, 0x20, 0xe3, 0x8c, 0x2b, 0xa8, 0x26, 0xa8}; //probably the old reverse message
-    uint8_t *wtf = (uint8_t *)malloc(12);
+    rewrap(msg, 8, &send);
 
     // set up pattern generator and custom data type
     FDwfDigitalOutEnableSet(device_data->handle, chO, 1);
     FDwfDigitalOutTypeSet(device_data->handle, chO, DwfDigitalOutTypeCustom);
     FDwfDigitalOutRepeatSet(device_data->handle, 1);
     FDwfDigitalOutRunSet(device_data->handle, 0.02085);
-    unsigned int pnMin;
-    unsigned int pnMax;
-    //FDwfDigitalOutRepeatInfo(device_data->handle, &pnMin, &pnMax);
-    //printf("Should repeat no more than %u times and no less than %u times\n", pnMax, pnMin);
 
     // get a divider value for output frquency
     double int_freq = 0;
@@ -313,7 +301,7 @@ void req_data(Device::Data *device_data, int chI, int chO, double freq, double s
         }
         
     }
-
+    free(send);
 }
 
 // function for logging thermocouple voltage data (timestamp log not implemented yet but will be once this code actually works)

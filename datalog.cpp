@@ -189,7 +189,7 @@ void convert_to_pressure(double *voltages, double measurement, int *n, int *pres
 
 }
 
-void req_data(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, unsigned short *data) {
+void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, unsigned short *data) {
     
     // create message to send
     uint8_t msg[8] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};  // 0x04, 0x30, 0x30, 0x31, 0x31, 0x50, 0x56, 0x05
@@ -304,8 +304,31 @@ void req_data(Device::Data *device_data, int chI, int chO, double freq, double s
     free(send);
 }
 
+void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp) {
+    // get maximum buffer / minimum buffer sizes, else check for errors 
+    int max_buf;
+    int min_buf;
+    if(FDwfAnalogInBufferSizeInfo(device_data->handle, &min_buf, &max_buf) == 0) {
+        device.check_error(device_data);
+    }
+
+    // set analog input triggering
+    scope.trigger(device_data, 1, scope.trigger_source.analog, chI, 0);
+
+    double voltages[1000];
+    for(int i = 0; i < 1000; i++) {
+        voltages[i] = 0;
+    }
+    int n = 0;
+    int pressure;
+    double measurement = scope.measure(device_data, 1) * 1000;
+    convert_to_pressure(voltages, measurement, &n, &pressure);
+    printf("Pressure: %d bar \n", pressure); // display read measurements
+
+}
+
 // function for logging thermocouple voltage data (timestamp log not implemented yet but will be once this code actually works)
-void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, string filename) {
+void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
 
     // start the Analog Discovery 2
     // To check the list of configurations, check Device Manager in Waveforms Software, or page 144 of the Waveforms SDK Manual.
@@ -335,12 +358,22 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     // start digital logic analyzer and pattern generator
     logic.open(device_data, sample_rate, 120);
     logic.trigger(device_data, 1, chI, 0, 0, 0, 0, 20, 0);
+
+    // start the scope
+    scope.open(device_data, sample_rate, max_buf, offset, amp);
     
     // query temperature controller for data
     write_csv_head(filename, "Thermocouple Voltage (mV)");
     unsigned short data[1];
+    int preset = 5;
     while(1) {
-        req_data(device_data, chI, chO, out_freq, sample_rate, data);
+        req_temp(device_data, chI, chO, out_freq, sample_rate, data);
+        if(preset == 0) {
+            req_press(device_data, achI, asr, offset, amp);
+        }
+        else {
+            preset--;
+        } 
         delay(del);
     }
 
@@ -349,6 +382,9 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
 
     // close logic
     logic.close(device_data);
+
+    // close the oscilloscope
+    scope.close(device_data);
     
     // close the device
     device.close(device_data);

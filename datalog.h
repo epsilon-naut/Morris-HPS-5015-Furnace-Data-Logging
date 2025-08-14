@@ -51,6 +51,6 @@ using namespace std;
 #define Y 0x59
 #define Z 0x5A
 
-void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, string filename);
+void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);
 
 #endif

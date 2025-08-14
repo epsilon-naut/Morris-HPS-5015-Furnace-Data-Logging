@@ -190,7 +190,12 @@ void convert_to_pressure(double *voltages, double measurement, int *n, int *pres
 
 }
 
-void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, unsigned short *data, int *disp) {
+void req_time(struct tm **ptr) {
+    time_t t = time(NULL);
+    *ptr = localtime(&t);
+}
+
+void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, int *t, int *disp) {
     
     // create message to send
     uint8_t msg[8] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};  // 0x04, 0x30, 0x30, 0x31, 0x31, 0x50, 0x56, 0x05
@@ -268,7 +273,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     //printf("Sending...?\n");
     
     uint8_t rec = 0;
-    uint16_t temp = 0;
+    int temp = 0;
 
     FDwfDigitalOutDataSet(device_data->handle, chO, send, 96);
     FDwfDigitalOutConfigure(device_data->handle, 1);
@@ -290,7 +295,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
             //printf("Current askye: %u\n", askye[test_num]);
             if (i == 8) {
                 *disp = 1;
-                printf("Current temperature: %u C\n", temp);
+                *t = temp;
                 rec = 0;
                 temp = 0;
             }
@@ -307,7 +312,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     free(send);
 }
 
-void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *voltages, int *n, int disp) {
+void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *voltages, int *n, int *press, double *r, int disp) {
     // get maximum buffer / minimum buffer sizes, else check for errors 
     int max_buf;
     int min_buf;
@@ -322,9 +327,8 @@ void req_press(Device::Data *device_data, int chI, double sample_rate, double of
     double raw;
     double measurement = scope.measure(device_data, 1) * 1000;
     convert_to_pressure(voltages, measurement, n, &pressure, &raw);
-    if (disp == 1) {
-        printf("Pressure: %d bar, Raw: %lf mV\n", pressure, raw); // display read measurements
-    }
+    *press = pressure;
+    *r = raw;
     
 }
 
@@ -363,25 +367,42 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     // start the scope
     scope.open(device_data, sample_rate, max_buf, offset, amp);
     
-    // query temperature controller for data
+    //csv initialize
     write_csv_head(filename, "Thermocouple Voltage (mV)");
-    unsigned short data[1];
+
+    // time related variables
+    struct tm *time;
+    char *t = (char *)malloc(26*sizeof(char));
+
+    // temperature related variables
+    int temp;
     
-    //req_press related presets
+    // pressure related variables
     double voltages[1000];
     for(int i = 0; i < 1000; i++) {
         voltages[i] = 0;
     }
     int n = 0;
     int disp;
+    int pressure;
+    double raw;
 
-    for(int i = 30; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
+    for(int i = 1000; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
         if(i < 0) {
-            req_temp(device_data, chI, chO, out_freq, sample_rate, data, &disp);
-            req_press(device_data, achI, asr, offset, amp, voltages, &n, disp);
+            req_time(&time);
+            req_temp(device_data, chI, chO, out_freq, sample_rate, &temp, &disp);
+            req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, disp);
+            if(disp == 1) {
+                t = asctime(time);
+                t[24] = '\0';
+                printf("Time: %s, Temperature: %d C, Turrent pressure: %d bar, APV: %lf mV\n", t, temp, pressure, raw);
+            }
         }
         delay(del);
     }
+
+    // free time 
+    free(t);
 
     // disable analog input
     FDwfAnalogIOChannelNodeSet(device_data->handle, 0, 0, 0);

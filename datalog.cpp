@@ -20,13 +20,13 @@ void delay(int ms) {
 }
 
 // function for writing data to a csv file
-void write_csv(string filename, char* time, int temp, int pressure, double raw, double measurement) {
+void write_csv(string filename, char* time, int temp, int pressure, double raw, double measurement, int count) {
     ofstream output;
     output.open(filename, ios::app);
     for(int i = 0; i < 24; i++) {
         output << time[i];
     }
-    output << "," << temp << "," << pressure << "," << raw << "," << measurement << "\n";
+    output << "," << count << "," << temp << "," << pressure << "," << raw << "," << measurement << "\n";
     output.close();
 }
 
@@ -163,24 +163,24 @@ void rewrap(uint8_t *data, int n, uint8_t **nums) {
 // analog pressure conversion function
 void convert_to_pressure(double *voltages, double measurement, int *n, int *pressure, double *raw) {
     // fill the voltages array with measurements
-    if(*n < 1000) {
+    if(*n < 10000) {
         voltages[*n] = measurement;
         *n += 1;
     }
 
     // remove the front of the voltages array and add the measurement to the end (FILO)
     else {
-        for(int i = 1; i < 1000; i++) {
+        for(int i = 1; i < 10000; i++) {
             voltages[i-1] = voltages[i];
         }
-        voltages[999] = measurement;
+        voltages[9999] = measurement;
     }
 
     double sum = 0;
     for(int i = 0; i < *n; i++) {
         sum += voltages[i];
     }
-    *pressure = round((sum/(*n)*6.3-8.25));
+    *pressure = round((sum/(*n)*6.33-8.82));
     *raw = (sum/(*n));
 
 }
@@ -361,19 +361,20 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     scope.open(device_data, sample_rate, max_buf, offset, amp);
     
     //csv initialize
-    string colnames[5] = {"Time", "Temperature (C)", "Pressure (bar)", "Average Pressure Voltage (mV)", "Analog Pressure Reading (mV)"};
-    write_csv_head(filename, colnames, 5);
+    string colnames[6] = {"Time", "Count", "Temperature (C)", "Pressure (bar)", "Average Pressure Voltage (mV)", "Analog Pressure Reading (mV)"};
+    write_csv_head(filename, colnames, 6);
 
-    // time related variables
+    // time and tracking related variables
     struct tm *time;
     char *t = (char *)malloc(26*sizeof(char));
+    int count = 0;
 
     // temperature related variables
     int temp;
     
     // pressure related variables
-    double voltages[1000];
-    for(int i = 0; i < 1000; i++) {
+    double voltages[10000];
+    for(int i = 0; i < 10000; i++) {
         voltages[i] = 0;
     }
     int n = 0;
@@ -389,7 +390,8 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
             t = asctime(time);
             t[24] = '\0';
             printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV, Measured: %lf mV\n", t, temp, pressure, raw, measurement);
-            write_csv(filename, t, temp, pressure, raw, measurement);
+            write_csv(filename, t, temp, pressure, raw, measurement, count);
+            count++;
         }
         else if (i == 0) {
             printf("Starting Logging. \n");

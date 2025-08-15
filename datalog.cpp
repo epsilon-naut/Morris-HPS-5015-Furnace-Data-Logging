@@ -180,7 +180,7 @@ void convert_to_pressure(double *voltages, double measurement, int *n, int *pres
     for(int i = 0; i < *n; i++) {
         sum += voltages[i];
     }
-    *pressure = round((sum/(*n)*6.37-9.76));
+    *pressure = round((sum/(*n)*6.3-8.25));
     *raw = (sum/(*n));
 
 }
@@ -190,7 +190,7 @@ void req_time(struct tm **ptr) {
     *ptr = localtime(&t);
 }
 
-void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, int *t, int *disp) {
+void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, int *t) {
     
     // create message to send
     uint8_t msg[8] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};  // 0x04, 0x30, 0x30, 0x31, 0x31, 0x50, 0x56, 0x05
@@ -274,7 +274,6 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     FDwfDigitalOutConfigure(device_data->handle, 1);
     vector<unsigned short> input = logic.record(device_data, chI);
 
-    *disp = 0;
     for(int i = 0; i < input.size()/10; i++) {
         uint16_t test_num = 0;
         for(int j = 0; j < 10; j++) {
@@ -289,7 +288,6 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
         if(rec == 1) {
             //printf("Current askye: %u\n", askye[test_num]);
             if (i == 8) {
-                *disp = 1;
                 *t = temp;
                 rec = 0;
                 temp = 0;
@@ -307,7 +305,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     free(send);
 }
 
-void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *voltages, int *n, int *press, double *r, int disp) {
+void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *voltages, int *n, int *press, double *r, double *m) {
     // get maximum buffer / minimum buffer sizes, else check for errors 
     int max_buf;
     int min_buf;
@@ -324,7 +322,7 @@ void req_press(Device::Data *device_data, int chI, double sample_rate, double of
     convert_to_pressure(voltages, measurement, n, &pressure, &raw);
     *press = pressure;
     *r = raw;
-    
+    *m = measurement;
 }
 
 // function for logging thermocouple voltage data (timestamp log not implemented yet but will be once this code actually works)
@@ -379,18 +377,18 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
         voltages[i] = 0;
     }
     int n = 0;
-    int disp;
+    double measurement;
     int pressure;
     double raw;
 
     for(int i = 1000; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
         if(i < 0) {
             req_time(&time);
-            req_temp(device_data, chI, chO, out_freq, sample_rate, &temp, &disp);
-            req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, disp);
+            req_temp(device_data, chI, chO, out_freq, sample_rate, &temp);
+            req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, &measurement);
             t = asctime(time);
             t[24] = '\0';
-            printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV\n", t, temp, pressure, raw);
+            printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV, Measured: %lf mV\n", t, temp, pressure, raw, measurement);
             write_csv(filename, t, temp, pressure, raw);
         }
         else if (i == 0) {

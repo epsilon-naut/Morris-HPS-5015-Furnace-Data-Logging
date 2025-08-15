@@ -20,13 +20,13 @@ void delay(int ms) {
 }
 
 // function for writing data to a csv file
-void write_csv(string filename, char* time, int temp, int pressure, double raw) {
+void write_csv(string filename, char* time, int temp, int pressure, double raw, double measurement) {
     ofstream output;
     output.open(filename, ios::app);
     for(int i = 0; i < 24; i++) {
         output << time[i];
     }
-    output << "," << temp << "," << pressure << "," << raw << "\n";
+    output << "," << temp << "," << pressure << "," << raw << "," << measurement << "\n";
     output.close();
 }
 
@@ -361,8 +361,8 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     scope.open(device_data, sample_rate, max_buf, offset, amp);
     
     //csv initialize
-    string colnames[4] = {"Time", "Temperature (C)", "Pressure (bar)", "Analog Pressure Voltage (mV)"};
-    write_csv_head(filename, colnames, 4);
+    string colnames[5] = {"Time", "Temperature (C)", "Pressure (bar)", "Average Pressure Voltage (mV)", "Analog Pressure Reading (mV)"};
+    write_csv_head(filename, colnames, 5);
 
     // time related variables
     struct tm *time;
@@ -389,7 +389,7 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
             t = asctime(time);
             t[24] = '\0';
             printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV, Measured: %lf mV\n", t, temp, pressure, raw, measurement);
-            write_csv(filename, t, temp, pressure, raw);
+            write_csv(filename, t, temp, pressure, raw, measurement);
         }
         else if (i == 0) {
             printf("Starting Logging. \n");

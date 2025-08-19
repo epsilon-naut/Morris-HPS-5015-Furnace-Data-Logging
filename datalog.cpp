@@ -383,10 +383,10 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     double raw;
 
     for(int i = 1000; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
+        req_time(&time);
+        req_temp(device_data, chI, chO, out_freq, sample_rate, &temp);
+        req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, &measurement);
         if(i < 0) {
-            req_time(&time);
-            req_temp(device_data, chI, chO, out_freq, sample_rate, &temp);
-            req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, &measurement);
             t = asctime(time);
             t[24] = '\0';
             printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV, Measured: %lf mV\n", t, temp, pressure, raw, measurement);

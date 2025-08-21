@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "datalog.h"
 #include "display.h"
 #include <string>
 
@@ -20,11 +19,7 @@ int main(void) {
     double offset = 0;
     double amp = 0.5;  // measured amplitude in V (+/- 5 default). Try to limit this range as much as possible as the ADC switches from high to low gain operation past ~ +/- 2.5 V, which means resolution increases from 0.3 mV to 3mV.
 
-    printf("Starting Analog Discovery 2. \n");
-
-    display(0, {});
-
-    datalog(name, config, out_freq, in_freq, chI, chO, 1, achI, asr, offset, amp, "wtf.csv");
+    display(0, {}, name, config, out_freq, out_freq, chI, chO, 1, achI, asr, offset, amp, "wtf.csv");
 
    return 0;
 }

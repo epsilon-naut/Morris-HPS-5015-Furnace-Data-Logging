@@ -190,7 +190,7 @@ void req_time(struct tm **ptr) {
     *ptr = localtime(&t);
 }
 
-void req_temp(Device::Data *device_data, int chI, int chO, double freq, double sample_rate, int *t) {
+void req_temp(wf::Device::Data *device_data, int chI, int chO, double freq, double sample_rate, int *t) {
     
     // create message to send
     uint8_t msg[8] = {EOT, ZERO, ZERO, ONE, ONE, P, V, ENQ};  // 0x04, 0x30, 0x30, 0x31, 0x31, 0x50, 0x56, 0x05
@@ -274,6 +274,8 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     FDwfDigitalOutConfigure(device_data->handle, 1);
     vector<unsigned short> input = logic.record(device_data, chI);
 
+    *t = -1;
+
     for(int i = 0; i < input.size()/10; i++) {
         uint16_t test_num = 0;
         for(int j = 0; j < 10; j++) {
@@ -305,7 +307,7 @@ void req_temp(Device::Data *device_data, int chI, int chO, double freq, double s
     free(send);
 }
 
-void req_press(Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *voltages, int *n, int *press, double *r, double *m) {
+void req_press(wf::Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *m) {
     // get maximum buffer / minimum buffer sizes, else check for errors 
     int max_buf;
     int min_buf;
@@ -319,18 +321,14 @@ void req_press(Device::Data *device_data, int chI, double sample_rate, double of
     int pressure;
     double raw;
     double measurement = scope.measure(device_data, 1) * 1000;
-    convert_to_pressure(voltages, measurement, n, &pressure, &raw);
-    *press = pressure;
-    *r = raw;
+    
     *m = measurement;
 }
 
-// function for logging thermocouple voltage data (timestamp log not implemented yet but will be once this code actually works)
-void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
-
+void start_device(string name, int config, double sample_rate, int chI, double offset, double amp, void **dev) {
     // start the Analog Discovery 2
     // To check the list of configurations, check Device Manager in Waveforms Software, or page 144 of the Waveforms SDK Manual.
-    Device::Data *device_data;
+    wf::Device::Data *device_data;
     device_data = device.open(name, config); 
 
     // initialize power supply
@@ -358,59 +356,46 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
 
     // start the scope
     scope.open(device_data, sample_rate, max_buf, offset, amp);
-    
-    //csv initialize
-    string colnames[6] = {"Time", "Count", "Temperature (C)", "Pressure (bar)", "Average Pressure Voltage (mV)", "Analog Pressure Reading (mV)"};
-    write_csv_head(filename, colnames, 6);
 
-    // time and tracking related variables
+    *dev = device_data;
+}
+
+void close_device(void *device_data) {
+
+    // disable analog input
+    FDwfAnalogIOChannelNodeSet(((Device::Data *)device_data)->handle, 0, 0, 0);
+
+    // close logic
+    logic.close((Device::Data *)device_data);
+
+    // close the oscilloscope
+    scope.close((Device::Data *)device_data);
+    
+    // close the device
+    device.close((Device::Data *)device_data);
+}
+
+// function for logging thermocouple voltage data (timestamp log not implemented yet but will be once this code actually works)
+void datalog(void *device_data, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename, char **ti, int *te, double *me, int *co) {
+
     struct tm *time;
-    char *t = (char *)malloc(26*sizeof(char));
     int count = 0;
 
     // temperature related variables
     int temp;
     
     // pressure related variables
-    double voltages[10000];
-    for(int i = 0; i < 10000; i++) {
-        voltages[i] = 0;
-    }
-    int n = 0;
     double measurement;
-    int pressure;
-    double raw;
-
-    for(int i = 60; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
-        req_time(&time);
-        req_temp(device_data, chI, chO, out_freq, sample_rate, &temp);
-        req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, &measurement);
-        if(i < 0) {
-            t = asctime(time);
-            t[24] = '\0';
-            printf("Time: %s, Temperature: %d C, Current pressure: %d bar, APV: %lf mV, Measured: %lf mV\n", t, temp, pressure, raw, measurement);
-            write_csv(filename, t, temp, pressure, raw, measurement, count);
-            count++;
-        }
-        else if (i == 0) {
-            printf("Starting Logging. \n");
-        }
-        delay(del);
-    }
-
-    // free time 
-    free(t);
-
-    // disable analog input
-    FDwfAnalogIOChannelNodeSet(device_data->handle, 0, 0, 0);
-
-    // close logic
-    logic.close(device_data);
-
-    // close the oscilloscope
-    scope.close(device_data);
     
-    // close the device
-    device.close(device_data);
+    req_time(&time);
+    req_temp((Device::Data *)device_data, chI, chO, out_freq, sample_rate, &temp);
+    req_press((Device::Data *)device_data, achI, asr, offset, amp, &measurement);
+    *ti = asctime(time);
+    (*ti)[24] = '\0';
+    *te = temp;
+    *me = measurement;
+    (*co) += 1;
+
+    
 }
 

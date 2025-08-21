@@ -51,6 +51,16 @@ using namespace std;
 #define Y 0x59
 #define Z 0x5A
 
-void datalog(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);
+void write_csv(string filename, char* time, int temp, int pressure, double raw, double measurement, int count);
+
+void write_csv_head(string filename, string *colnames, int size);
+
+void convert_to_pressure(double *voltages, double measurement, int *n, int *pressure, double *raw);
+
+void start_device(string name, int config, double sample_rate, int chI, double offset, double amp, void **dev);
+
+void close_device(void *device_data);
+
+void datalog(void *device_data, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename, char **ti, int *te, double *me, int *co);
 
 #endif

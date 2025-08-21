@@ -399,7 +399,8 @@
 		"C:/Qt/6.9.1/msvc2022_64/include",
 		"C:/Qt/6.9.1/msvc2022_64/mkspecs/win32-msvc",
 		"C:/Qt/6.9.1/msvc2022_64/include/QtWidgets",
-		"C:/Qt/6.9.1/msvc2022_64/include/QtGui"
+		"C:/Qt/6.9.1/msvc2022_64/include/QtGui",
+		"C:/VulkanSDK/1.4.321.1/Include"
 	],
 	"MOC_INCLUDES_MinSizeRel" : 
 	[
@@ -409,7 +410,8 @@
 		"C:/Qt/6.9.1/msvc2022_64/include",
 		"C:/Qt/6.9.1/msvc2022_64/mkspecs/win32-msvc",
 		"C:/Qt/6.9.1/msvc2022_64/include/QtWidgets",
-		"C:/Qt/6.9.1/msvc2022_64/include/QtGui"
+		"C:/Qt/6.9.1/msvc2022_64/include/QtGui",
+		"C:/VulkanSDK/1.4.321.1/Include"
 	],
 	"MOC_INCLUDES_RelWithDebInfo" : 
 	[
@@ -419,7 +421,8 @@
 		"C:/Qt/6.9.1/msvc2022_64/include",
 		"C:/Qt/6.9.1/msvc2022_64/mkspecs/win32-msvc",
 		"C:/Qt/6.9.1/msvc2022_64/include/QtWidgets",
-		"C:/Qt/6.9.1/msvc2022_64/include/QtGui"
+		"C:/Qt/6.9.1/msvc2022_64/include/QtGui",
+		"C:/VulkanSDK/1.4.321.1/Include"
 	],
 	"MOC_INCLUDES_Release" : 
 	[
@@ -429,7 +432,8 @@
 		"C:/Qt/6.9.1/msvc2022_64/include",
 		"C:/Qt/6.9.1/msvc2022_64/mkspecs/win32-msvc",
 		"C:/Qt/6.9.1/msvc2022_64/include/QtWidgets",
-		"C:/Qt/6.9.1/msvc2022_64/include/QtGui"
+		"C:/Qt/6.9.1/msvc2022_64/include/QtGui",
+		"C:/VulkanSDK/1.4.321.1/Include"
 	],
 	"MOC_MACRO_NAMES" : 
 	[

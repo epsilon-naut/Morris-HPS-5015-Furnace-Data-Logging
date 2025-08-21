@@ -64,7 +64,7 @@ uint16_t wrap2(uint8_t data) {
 }
 
 void reverse(uint8_t *data, int n, uint8_t **nums) {
-    uint8_t arr[n*10];
+    vector<uint8_t> arr(n*10);
 
     // index from last to first, wrap the message and store it into individual bits, LSB first
     for(int i = 0; i < n; i++) {
@@ -110,7 +110,7 @@ void reverse(uint8_t *data, int n, uint8_t **nums) {
 }
 
 void rewrap(uint8_t *data, int n, uint8_t **nums) {
-    uint8_t arr[n*10];
+    vector<uint8_t> arr(n*10);
 
     // index from last to first, wrap the message and store it into individual bits, LSB first
     for(int i = 0; i < n; i++) {
@@ -128,7 +128,7 @@ void rewrap(uint8_t *data, int n, uint8_t **nums) {
     }
 
     //  repackage bits into bytes for output
-    uint8_t res[int(n*5/4)+1];
+    vector<uint8_t> res(int(n*5/4)+1);
     uint8_t *ult = (uint8_t *)malloc(int(n*5/4)+3);
     uint8_t pos = 0;
     for(int i = 10 * n - 8; i > -1; i -= 8) {
@@ -336,11 +336,10 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     // initialize power supply
     FDwfAnalogIOChannelNodeSet(device_data->handle, 0, 1, 0);
     FDwfAnalogIOChannelNodeSet(device_data->handle, 0, 0, 0);
-    delay(5000);
     FDwfAnalogIOReset(device_data->handle);
     FDwfAnalogIOConfigure(device_data->handle);
 
-    // generate 5 volts
+    // generate 3.3 volts
     FDwfAnalogIOChannelNodeSet(device_data->handle, 0, 0, 1); // enables positive power supply
     FDwfAnalogIOChannelNodeSet(device_data->handle, 0, 1, 3.3); // set 3.3 V on the positive power supply
     FDwfAnalogIOChannelNodeSet(device_data->handle, 1, 0, 1); // enables negative power supply
@@ -382,7 +381,7 @@ void datalog(string name, int config, double out_freq, double sample_rate, int c
     int pressure;
     double raw;
 
-    for(int i = 1000; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
+    for(int i = 60; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
         req_time(&time);
         req_temp(device_data, chI, chO, out_freq, sample_rate, &temp);
         req_press(device_data, achI, asr, offset, amp, voltages, &n, &pressure, &raw, &measurement);

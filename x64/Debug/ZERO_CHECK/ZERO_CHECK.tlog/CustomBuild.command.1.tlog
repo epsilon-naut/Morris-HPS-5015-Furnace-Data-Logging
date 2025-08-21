@@ -1,0 +1,10 @@
+^C:\USERS\JEFF\DOCUMENTS\RESEARCH\HPS5015\CODE\CMAKEFILES\26000CE3689098A6C476BBD580C4FFC4\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Jeff/Documents/Research/HPS5015/code -BC:/Users/Jeff/Documents/Research/HPS5015/code --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Jeff/Documents/Research/HPS5015/code/log.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -15,6 +15,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QSizeF \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QString \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QStringList \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCore/QThread \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QVariant \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QtCore \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QtCoreDepends \

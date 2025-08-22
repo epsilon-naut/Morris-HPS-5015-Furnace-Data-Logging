@@ -7,6 +7,7 @@
 #include <string>
 #include <QString>
 #include <QPushButton>
+#include <QThread>
 
 using namespace std;
 using namespace Qt;
@@ -53,8 +54,6 @@ class Log : public QObject {
 
     public slots:
     void dtlog();
-    void temp_update(int t);
-    void press_update(int p);
 
     signals:
     void temp_updated(int temp);
@@ -69,6 +68,57 @@ class Log : public QObject {
     int count;
 
 };
+
+class Label : public QLabel {
+
+    Q_OBJECT
+    
+    public: 
+
+    Label(Alignment align, string name, string unit) {
+        val = 0;
+        nm = name;
+        un = unit;
+        this->setText(QString("%2: %1 %3").arg(val).arg(QString::fromStdString(nm)).arg(QString::fromStdString(un))); 
+        this->setAlignment(align);
+    }
+
+    public slots:
+        void update(int value);
+
+    private:
+        int val;
+        string nm;
+        string un;
+
+};
+
+class disp : public QObject {
+    
+    Q_OBJECT
+    QThread log_thread;
+
+    public:
+    
+    disp(Log *lg) {
+        lg->moveToThread(&log_thread);
+        connect(&log_thread, &QThread::finished, lg, &QObject::deleteLater);
+        connect(this, &disp::startlog, lg, &Log::dtlog);
+        log_thread.start();
+    }
+
+    ~disp() {
+        log_thread.quit();
+        log_thread.wait();
+    }
+
+    public slots:
+        void startButtonPressed();
+    signals:
+        void startlog();
+};
+
+
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);
 

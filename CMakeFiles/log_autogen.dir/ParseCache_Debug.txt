@@ -18,6 +18,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QSizeF
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QString
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QStringList
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QThread
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QVariant
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QtCore
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QtCoreDepends

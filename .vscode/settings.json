@@ -2,6 +2,11 @@
     "files.associations": {
         "xstring": "cpp",
         "fstream": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "chrono": "cpp",
+        "future": "cpp",
+        "system_error": "cpp",
+        "xlocale": "cpp",
+        "typeinfo": "cpp"
     }
 }

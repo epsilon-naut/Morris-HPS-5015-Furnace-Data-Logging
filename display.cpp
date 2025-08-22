@@ -5,6 +5,7 @@
 #include <string>
 #include <QString>
 #include <QPushButton>
+#include <QThread>
 #include "display.h"
 #include "datalog.h"
 
@@ -46,7 +47,9 @@ void Log::dtlog() {
             }
             else {
                 last_temp = temp;
+                emit temp_updated(temp);
             }
+            emit press_updated(press);
             write_csv(fle, time, temp, press, raw, measurement, count);
         }
     }
@@ -57,12 +60,14 @@ void Log::dtlog() {
     close_device(device_data);
 }
 
-void Log::temp_update(int t) {
-
+void disp::startButtonPressed() {
+    emit startlog();
 }
 
-void Log::press_update(int p) {
-    
+void Label::update(int value) {
+    val = value;
+    this->setText(QString("%2: %1 %3").arg(val).arg(QString::fromStdString(nm)).arg(QString::fromStdString(un)));
+    this->repaint();
 }
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
@@ -81,20 +86,16 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     
     //add items to vertical layout
     
-    QLabel *temp = new QLabel();
-    int t_val = 415;
-    temp->setText(QString("Temperature: %1 C").arg(t_val)); 
-    temp->setAlignment(AlignLeft);
-
-    QLabel *press = new QLabel();
-    int p_val = 285;
-    press->setText(QString("Pressure: %1 bar").arg(p_val));
-    press->setAlignment(AlignLeft);
+    Label *temp = new Label(AlignLeft, "Temperature", "C"); 
+    Label *press = new Label(AlignLeft, "Pressure", "bar"); 
 
     Log *log = new Log(name, config, out_freq, sample_rate, chI, chO, del, achI, asr, offset, amp, filename);
+    disp *dis = new disp(log);
 
     QPushButton *start = new QPushButton("Start Logging");
-    QObject::connect(start, &QPushButton::clicked, log, &Log::dtlog);
+    QObject::connect(start, &QPushButton::clicked, dis, &disp::startButtonPressed);
+    QObject::connect(log, &Log::temp_updated, temp, &Label::update);
+    QObject::connect(log, &Log::press_updated, press, &Label::update);
 
     QLabel *graph = new QLabel();
     graph->setText("Graph Goes Here");
@@ -103,7 +104,7 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     v1->addWidget(temp, 0);
     v1->addWidget(press, 1);
     v1->addWidget(start, 2);
-    v1->addSpacing(800);
+    v1->addSpacing(500);
     
     hori.addWidget(graph, 0, 1, 3, 4);
 

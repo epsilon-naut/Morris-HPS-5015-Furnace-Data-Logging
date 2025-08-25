@@ -1,4 +1,22 @@
 C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46WW/moc_display.cpp: C:/Users/Jeff/Documents/Research/HPS5015/code/display.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QAbstractAxis \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QAbstractSeries \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChart \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChartGlobal \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChartView \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLegend \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLineSeries \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QXYSeries \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractaxis.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractseries.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qchart.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qchartglobal.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qchartview.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qlegend.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qlineseries.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtcharts-config.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtchartsexports.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qxyseries.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QDeadlineTimer \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QEvent \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QHash \
@@ -291,10 +309,14 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/qyieldcpu.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QAction \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QActionGroup \
+  C:/Qt/6.9.1/msvc2022_64/include/QtGui/QBrush \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QFileSystemModel \
+  C:/Qt/6.9.1/msvc2022_64/include/QtGui/QFont \
+  C:/Qt/6.9.1/msvc2022_64/include/QtGui/QImage \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QMatrix4x4 \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QPaintDevice \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QPaintDeviceWindow \
+  C:/Qt/6.9.1/msvc2022_64/include/QtGui/QPen \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QShortcut \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QSurfaceFormat \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/QTransform \
@@ -419,6 +441,8 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowdefs_win.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowsmimeconverter.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QCommonStyle \
+  C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QGraphicsView \
+  C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QGraphicsWidget \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLabel \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLayout \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QPushButton \

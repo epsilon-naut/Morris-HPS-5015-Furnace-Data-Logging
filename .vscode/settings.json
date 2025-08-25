@@ -7,6 +7,9 @@
         "future": "cpp",
         "system_error": "cpp",
         "xlocale": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "new": "cpp",
+        "qsizepolicy": "cpp",
+        "filesystem": "cpp"
     }
 }

@@ -8,6 +8,9 @@
 #include <QString>
 #include <QPushButton>
 #include <QThread>
+#include <QChart>
+#include <QChartView>
+#include <QLineSeries>
 
 using namespace std;
 using namespace Qt;
@@ -56,8 +59,8 @@ class Log : public QObject {
     void dtlog();
 
     signals:
-    void temp_updated(int temp);
-    void press_updated(int press);
+    void temp_updated(int count, int temp);
+    void press_updated(int count, int press);
 
     private: 
     char *time;
@@ -84,7 +87,7 @@ class Label : public QLabel {
     }
 
     public slots:
-        void update(int value);
+        void update(int count, int value);
 
     private:
         int val;
@@ -118,7 +121,49 @@ class disp : public QObject {
         void startlog();
 };
 
+class Chart : public QChart {
 
+    Q_OBJECT
+
+    public:
+    QLineSeries *series;
+
+    Chart(QString name) {
+        series = new QLineSeries();
+        this->legend()->hide();
+        this->addSeries(series);
+        this->createDefaultAxes();
+        this->setTitle(name);
+
+    }
+
+    public slots:
+        void updatevals(int count, int value);
+
+    signals:
+        void updated();
+};
+
+class Scene : public QObject {
+
+    Q_OBJECT
+
+    public:
+    QGraphicsScene *scene;
+    QGraphicsView *view;
+
+    Scene(QGraphicsItem *item) {
+        scene = new QGraphicsScene();
+        scene->addItem(item);
+        view = new QGraphicsView(scene);
+    }
+
+    public slots:
+        void redraw();
+
+    signals:
+        void updated();
+};
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);
 

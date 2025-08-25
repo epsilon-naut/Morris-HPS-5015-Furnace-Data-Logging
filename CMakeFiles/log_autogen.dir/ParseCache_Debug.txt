@@ -2,6 +2,24 @@
 C:/Users/Jeff/Documents/Research/HPS5015/code/datalog.h
 C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mmc:Q_OBJECT
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QAbstractAxis
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QAbstractSeries
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChart
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChartGlobal
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChartView
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLegend
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLineSeries
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QXYSeries
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractaxis.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractseries.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qchart.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qchartglobal.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qchartview.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qlegend.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qlineseries.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtcharts-config.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtchartsexports.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qxyseries.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QDeadlineTimer
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QEvent
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QHash
@@ -294,10 +312,14 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/qyieldcpu.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QAction
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QActionGroup
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QBrush
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QFileSystemModel
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QFont
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QImage
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QMatrix4x4
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QPaintDevice
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QPaintDeviceWindow
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QPen
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QShortcut
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QSurfaceFormat
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/QTransform
@@ -422,6 +444,8 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowdefs_win.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowsmimeconverter.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QCommonStyle
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QGraphicsView
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QGraphicsWidget
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLabel
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLayout
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QPushButton
@@ -554,29 +578,5 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/qwizard.h
  mdp:C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
 C:/Users/Jeff/Documents/Research/HPS5015/code/datalog.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/dmm.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/logic.h
 C:/Users/Jeff/Documents/Research/HPS5015/code/display.cpp
 C:/Users/Jeff/Documents/Research/HPS5015/code/main.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/device.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/pattern.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/protocol/i2c.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/protocol/spi.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/protocol/uart.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/device.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/scope.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/static.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/supplies.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/static.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/tools.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/wavegen.h
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/dmm.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/logic.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/pattern.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/protocol/i2c.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/protocol/spi.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/protocol/uart.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/scope.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/supplies.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/tools.cpp
-C:/Users/Jeff/Documents/Research/HPS5015/code/WF_SDK/wavegen.cpp

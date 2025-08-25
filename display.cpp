@@ -47,9 +47,9 @@ void Log::dtlog() {
             }
             else {
                 last_temp = temp;
-                emit temp_updated(temp);
+                emit temp_updated(count, temp);
             }
-            emit press_updated(press);
+            emit press_updated(count, press);
             write_csv(fle, time, temp, press, raw, measurement, count);
         }
     }
@@ -64,10 +64,23 @@ void disp::startButtonPressed() {
     emit startlog();
 }
 
-void Label::update(int value) {
+void Label::update(int count, int value) {
     val = value;
     this->setText(QString("%2: %1 %3").arg(val).arg(QString::fromStdString(nm)).arg(QString::fromStdString(un)));
     this->repaint();
+}
+
+void Chart::updatevals(int count, int value) {
+    this->removeSeries(series);
+    series->append(count, value);
+    this->addSeries(series);
+    this->createDefaultAxes();
+    this->update();
+    emit updated();
+}
+
+void Scene::redraw() {
+
 }
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
@@ -93,20 +106,30 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     disp *dis = new disp(log);
 
     QPushButton *start = new QPushButton("Start Logging");
-    QObject::connect(start, &QPushButton::clicked, dis, &disp::startButtonPressed);
-    QObject::connect(log, &Log::temp_updated, temp, &Label::update);
-    QObject::connect(log, &Log::press_updated, press, &Label::update);
-
-    QLabel *graph = new QLabel();
-    graph->setText("Graph Goes Here");
-    graph->setAlignment(AlignLeft);
     
+    Chart *chart = new Chart(QString("Temperature"));
+    Chart *chart2 = new Chart(QString("Pressure"));
+    
+    QChartView *view = new QChartView(chart);
+    QChartView *view2 = new QChartView(chart2);
+    
+
     v1->addWidget(temp, 0);
     v1->addWidget(press, 1);
     v1->addWidget(start, 2);
     v1->addSpacing(500);
     
-    hori.addWidget(graph, 0, 1, 3, 4);
 
+    hori.addWidget(view, 0, 1, 2, 5);
+    hori.addWidget(view2, 2, 1, 2, 5);
+
+    QObject::connect(start, &QPushButton::clicked, dis, &disp::startButtonPressed);
+    QObject::connect(log, &Log::temp_updated, temp, &Label::update);
+    QObject::connect(log, &Log::press_updated, press, &Label::update);
+    QObject::connect(log, &Log::temp_updated, chart, &Chart::updatevals);
+    QObject::connect(log, &Log::press_updated, chart2, &Chart::updatevals);
+    //QObject::connect(chart, &Chart::updated, scene, &Scene::redraw);
+
+    view->show();
     return app.exec();
 }

@@ -13,6 +13,7 @@
 #include <QLineSeries>
 #include <QValueAxis>
 #include <algorithm>
+#include <QFileDialog>
 
 using namespace std;
 using namespace Qt;
@@ -59,6 +60,7 @@ class Log : public QObject {
 
     public slots:
     void dtlog();
+    void refile(QString filename);
 
     signals:
     void temp_updated(int count, int temp);
@@ -141,10 +143,9 @@ class Chart : public QChart {
         // axis-specific initialization
         
         x = new QValueAxis(); y = new QValueAxis();
-        x->setRange(0, 100); y->setRange(0, 100);
-        x->setTickAnchor(0); y->setTickAnchor(0);
-        x->setTickInterval(10); y->setTickInterval(10);
-        x->setTickType(QValueAxis::TicksDynamic); y->setTickType(QValueAxis::TicksDynamic);
+        x->setRange(0, 50); y->setRange(0, 100);
+        x->setTickType(QValueAxis::TicksFixed); y->setTickType(QValueAxis::TicksFixed);
+        x->setTickCount(10); y->setTickCount(5);
         x->setTitleText("Count"); y->setTitleText(QString("%1 (%2)").arg(name).arg(units));
         
 
@@ -191,6 +192,50 @@ class Scene : public QObject {
 
     signals:
         void updated();
+};
+
+class Save : public QFileDialog {
+
+    Q_OBJECT
+    
+    public:
+
+    QString filename;
+
+    Save() {
+        this->setFileMode(QFileDialog::AnyFile);
+        this->setNameFilter("CSV files (*.csv)");
+        this->setViewMode(QFileDialog::Detail);
+    }
+
+    public slots:
+    void save();
+
+    signals:
+    void relabel(QString filename);
+};
+
+class fLabel : public QLabel {
+
+    Q_OBJECT
+    
+    public: 
+    QString str;
+
+    fLabel(Alignment align) {
+        str = "";
+        this->setText(QString("Name: %1").arg(str)); 
+        this->setAlignment(align);
+    }
+
+    public slots:
+        void update(QString filename);
+
+    private:
+        int val;
+        string nm;
+        string un;
+
 };
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);

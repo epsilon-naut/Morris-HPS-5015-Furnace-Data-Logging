@@ -35,7 +35,8 @@ void Log::dtlog() {
         if(i < 0) {
             datalog(device_data, frq, smp, inp, out, dly, aIn, asp, off, apl, fle, &time, &temp, &measurement, &count);
             convert_to_pressure(voltages, measurement, &n, &press, &raw);
-            if(temp == -1) {
+            if(count % 6 == 0) {
+                if(temp == -1) {
                 temp = last_temp;
             }
             else {
@@ -43,6 +44,7 @@ void Log::dtlog() {
                 emit temp_updated(count, temp);
             }
             emit press_updated(count, press);
+            }
             write_csv(fle, time, temp, press, raw, measurement, count);
         }
     }
@@ -64,23 +66,21 @@ void Label::update(int count, int value) {
 }
 
 void Chart::updatevals(int count, int value) {
-    this->removeSeries(series);
 
-    if(count > 100) {
-        x->setRange(count-90, count+10); 
-        x->setTickAnchor(count-90);
-        y->setRange(static_cast<double>(*min_element(pastvals, pastvals+99)-50), static_cast<double>(*min_element(pastvals, pastvals+99)+50));
-        for(int i = 1; i < 100; i++) {
+    if(count > 50) {
+        x->setRange(0, count+10); 
+        x->setTickInterval((int)((count+10)/10));
+        for(int i = 1; i < 50; i++) {
             pastvals[i-1] = pastvals[i];
         }
-        pastvals[99] = value;
+        pastvals[49] = value;
     } 
     else {
-        pastvals[count] = value;
+        pastvals[count-1] = value;
     }
+    y->setRange(static_cast<double>(min(*min_element(pastvals, pastvals+49),*max_element(pastvals, pastvals+49)-50)), static_cast<double>(*max_element(pastvals, pastvals+49)+50));
     series->append(count, value);
-    
-    this->addSeries(series);
+
     series->attachAxis(x);
     series->attachAxis(y);
     this->update();
@@ -89,6 +89,39 @@ void Chart::updatevals(int count, int value) {
 
 void Scene::redraw() {
 
+}
+
+void Save::save() {
+    if(this->exec() == QDialog::Accepted) {
+        filename = (this->selectedFiles())[0];
+    }   
+    emit relabel(filename);
+}
+
+string return_filename(QString filename) {
+    string f = filename.toUtf8().toStdString();
+    string end = "";
+    int yes = 0;
+    for(int i = 0; i < f.length(); i++) {
+        if (f.at(i) == '\\') {
+            f.at(i) = '/';
+        }
+        if (i >= f.length()-4) {
+            end += f.at(i);
+        }
+    }
+    if(end != ".csv") {
+        f += ".csv";
+    }
+    return f;
+}
+
+void fLabel::update(QString filename) {
+    this->setText(QString("Name: %1").arg(QString::fromStdString(return_filename(filename)))); 
+}
+
+void Log::refile(QString filename) {
+    fle = return_filename(filename);
 }
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
@@ -109,11 +142,16 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     
     Label *temp = new Label(AlignLeft, "Temperature", "C"); 
     Label *press = new Label(AlignLeft, "Pressure", "bar"); 
+    fLabel *flab = new fLabel(AlignLeft);
 
-    Log *log = new Log(name, config, out_freq, sample_rate, chI, chO, del, achI, asr, offset, amp, filename);
+    Save *save = new Save();
+
+    Log *log = new Log(name, config, out_freq, sample_rate, chI, chO, del, achI, asr, offset, amp, return_filename(save->filename));
     disp *dis = new disp(log);
 
     QPushButton *start = new QPushButton("Start Logging");
+
+    QPushButton *savebt = new QPushButton("Save Data");
     
     Chart *chart = new Chart(QString("Temperature"), QString("C"));
     Chart *chart2 = new Chart(QString("Pressure"), QString("bar"));
@@ -125,6 +163,8 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     v1->addWidget(temp, 0);
     v1->addWidget(press, 1);
     v1->addWidget(start, 2);
+    v1->addWidget(savebt, 3);
+    v1->addWidget(flab, 4);
     v1->addSpacing(500);
     
 
@@ -136,6 +176,9 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     QObject::connect(log, &Log::press_updated, press, &Label::update);
     QObject::connect(log, &Log::temp_updated, chart, &Chart::updatevals);
     QObject::connect(log, &Log::press_updated, chart2, &Chart::updatevals);
+    QObject::connect(savebt, &QPushButton::clicked, save, &Save::save);
+    QObject::connect(save, &Save::relabel, flab, &fLabel::update);
+    QObject::connect(save, &Save::relabel, log, &Log::refile);
     //QObject::connect(chart, &Chart::updated, scene, &Scene::redraw);
 
     view->show();

@@ -19,7 +19,7 @@ int main(void) {
     double offset = 0;
     double amp = 0.5;  // measured amplitude in V (+/- 5 default). Try to limit this range as much as possible as the ADC switches from high to low gain operation past ~ +/- 2.5 V, which means resolution increases from 0.3 mV to 3mV.
 
-    display(0, {}, name, config, out_freq, out_freq, chI, chO, 1, achI, asr, offset, amp, "wtf.csv");
+    display(0, {}, name, config, out_freq, out_freq, chI, chO, 1, achI, asr, offset, amp, "C:/Users/Jeff/Documents/Research/HPS5015/code/Debug/wtf.csv");
 
    return 0;
 }

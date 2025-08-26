@@ -442,6 +442,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowdefs_win.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowsmimeconverter.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QComboBox \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QCommonStyle \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QFileDialog \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QGraphicsView \

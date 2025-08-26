@@ -14,6 +14,7 @@
 #include <QValueAxis>
 #include <algorithm>
 #include <QFileDialog>
+#include <QComboBox>
 
 using namespace std;
 using namespace Qt;
@@ -134,6 +135,9 @@ class Chart : public QChart {
     QValueAxis *x;
     QValueAxis *y;
     int pastvals[100];
+    int cnt;
+    int val;
+    int ind;
 
     Chart(QString name, QString units) {
         // general chart
@@ -141,7 +145,7 @@ class Chart : public QChart {
         this->setTitle(name);
 
         // axis-specific initialization
-        
+        ind = 0;
         x = new QValueAxis(); y = new QValueAxis();
         x->setRange(0, 50); y->setRange(0, 100);
         x->setTickType(QValueAxis::TicksFixed); y->setTickType(QValueAxis::TicksFixed);
@@ -150,6 +154,8 @@ class Chart : public QChart {
         
 
         // series-specific initialization
+        cnt = 0;
+        val = 0;
         series = new QLineSeries();
         series->setPointsVisible();
         
@@ -168,6 +174,7 @@ class Chart : public QChart {
 
     public slots:
         void updatevals(int count, int value);
+        void updateaxes(int index);
 
     signals:
         void updated();
@@ -203,6 +210,7 @@ class Save : public QFileDialog {
     QString filename;
 
     Save() {
+        this->setDirectory("C:/Users/Jeff/Documents/Research/HPS5015/logs");
         this->setFileMode(QFileDialog::AnyFile);
         this->setNameFilter("CSV files (*.csv)");
         this->setViewMode(QFileDialog::Detail);
@@ -235,6 +243,25 @@ class fLabel : public QLabel {
         int val;
         string nm;
         string un;
+
+};
+
+class viewSelect : public QComboBox {
+
+    Q_OBJECT
+
+    public:
+
+    viewSelect() {
+        this->addItem("All Data");
+        this->addItem("Last 50 Values");
+    }
+
+    public slots:
+        void changed();
+
+    signals:
+        void index(int i);
 
 };
 

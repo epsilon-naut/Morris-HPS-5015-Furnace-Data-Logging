@@ -35,15 +35,15 @@ void Log::dtlog() {
         if(i < 0) {
             datalog(device_data, frq, smp, inp, out, dly, aIn, asp, off, apl, fle, &time, &temp, &measurement, &count);
             convert_to_pressure(voltages, measurement, &n, &press, &raw);
-            if(count % 6 == 0) {
-                if(temp == -1) {
+            if(temp == -1) {
                 temp = last_temp;
-            }
+                }
             else {
                 last_temp = temp;
+                }
+            if(count % 6 == 0) {      
                 emit temp_updated(count, temp);
-            }
-            emit press_updated(count, press);
+                emit press_updated(count, press);
             }
             write_csv(fle, time, temp, press, raw, measurement, count);
         }
@@ -65,26 +65,49 @@ void Label::update(int count, int value) {
     this->repaint();
 }
 
-void Chart::updatevals(int count, int value) {
-
-    if(count > 50) {
-        x->setRange(0, count+10); 
-        x->setTickInterval((int)((count+10)/10));
+void Chart::updateaxes(int index) {
+    ind = index;
+    if(ind == 0) {
+        if(cnt > 50) {
+        x->setRange(0, cnt+10); 
+        x->setTickInterval((int)((cnt+10)/10));
         for(int i = 1; i < 50; i++) {
             pastvals[i-1] = pastvals[i];
         }
-        pastvals[49] = value;
-    } 
+            pastvals[49] = val;
+        } 
+        else {
+            pastvals[cnt-1] = val;
+        }
+    }    
     else {
-        pastvals[count-1] = value;
+        if(cnt > 50) {
+        x->setRange(cnt-40, cnt+10);
+        x->setTickAnchor(cnt-40); 
+        x->setTickInterval(5);
+        for(int i = 1; i < 50; i++) {
+            pastvals[i-1] = pastvals[i];
+        }
+            pastvals[49] = val;
+        } 
+        else {
+            pastvals[cnt-1] = val;
+        }
     }
     y->setRange(static_cast<double>(min(*min_element(pastvals, pastvals+49),*max_element(pastvals, pastvals+49)-50)), static_cast<double>(*max_element(pastvals, pastvals+49)+50));
-    series->append(count, value);
-
     series->attachAxis(x);
     series->attachAxis(y);
     this->update();
     emit updated();
+}
+
+void Chart::updatevals(int count, int value) {
+    cnt = count;
+    val = value;
+    
+    series->append(cnt, val);
+
+    updateaxes(ind);
 }
 
 void Scene::redraw() {
@@ -124,10 +147,14 @@ void Log::refile(QString filename) {
     fle = return_filename(filename);
 }
 
+void viewSelect::changed() {
+    emit index(this->currentIndex());
+}
+
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
     QApplication app(argc, argv);
     QWidget window;
-    window.resize(1000, 600);
+    window.resize(1500, 750);
     window.show();
     window.setWindowTitle(QApplication::translate("toplevel", "HPS-5015 Data Logger"));
 
@@ -158,13 +185,15 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     
     QChartView *view = new QChartView(chart);
     QChartView *view2 = new QChartView(chart2);
-    
+
+    viewSelect *select = new viewSelect();
 
     v1->addWidget(temp, 0);
     v1->addWidget(press, 1);
     v1->addWidget(start, 2);
     v1->addWidget(savebt, 3);
     v1->addWidget(flab, 4);
+    v1->addWidget(select, 5);
     v1->addSpacing(500);
     
 
@@ -179,6 +208,9 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     QObject::connect(savebt, &QPushButton::clicked, save, &Save::save);
     QObject::connect(save, &Save::relabel, flab, &fLabel::update);
     QObject::connect(save, &Save::relabel, log, &Log::refile);
+    QObject::connect(select, &QComboBox::currentIndexChanged, select, &viewSelect::changed);
+    QObject::connect(select, &viewSelect::index, chart, &Chart::updateaxes);
+    QObject::connect(select, &viewSelect::index, chart2, &Chart::updateaxes);
     //QObject::connect(chart, &Chart::updated, scene, &Scene::redraw);
 
     view->show();

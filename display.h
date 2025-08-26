@@ -147,14 +147,14 @@ class Chart : public QChart {
         // axis-specific initialization
         ind = 0;
         x = new QValueAxis(); y = new QValueAxis();
-        x->setRange(0, 50); y->setRange(0, 100);
+        x->setRange(0, 50); y->setRange(-50, 50);
         x->setTickType(QValueAxis::TicksFixed); y->setTickType(QValueAxis::TicksFixed);
         x->setTickCount(10); y->setTickCount(5);
         x->setTitleText("Count"); y->setTitleText(QString("%1 (%2)").arg(name).arg(units));
         
 
         // series-specific initialization
-        cnt = 0;
+        cnt = 1;
         val = 0;
         series = new QLineSeries();
         series->setPointsVisible();
@@ -232,7 +232,7 @@ class fLabel : public QLabel {
 
     fLabel(Alignment align) {
         str = "";
-        this->setText(QString("Name: %1").arg(str)); 
+        this->setText(QString("File Name: %1").arg(str)); 
         this->setAlignment(align);
     }
 

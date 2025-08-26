@@ -134,13 +134,21 @@ string return_filename(QString filename) {
         }
     }
     if(end != ".csv") {
-        f += ".csv";
+        if(f == "") {
+
+        }
+        else if (f.at(f.length()-1) == '/') {
+
+        }
+        else {
+            f += ".csv";
+        }
     }
     return f;
 }
 
 void fLabel::update(QString filename) {
-    this->setText(QString("Name: %1").arg(QString::fromStdString(return_filename(filename)))); 
+    this->setText(QString("File Name: %1").arg(QString::fromStdString(return_filename(filename)))); 
 }
 
 void Log::refile(QString filename) {
@@ -178,7 +186,7 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     QPushButton *start = new QPushButton("Start Logging");
 
-    QPushButton *savebt = new QPushButton("Save Data");
+    QPushButton *savebt = new QPushButton("Set Save File");
     
     Chart *chart = new Chart(QString("Temperature"), QString("C"));
     Chart *chart2 = new Chart(QString("Pressure"), QString("bar"));
@@ -190,8 +198,8 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     v1->addWidget(temp, 0);
     v1->addWidget(press, 1);
-    v1->addWidget(start, 2);
-    v1->addWidget(savebt, 3);
+    v1->addWidget(savebt, 2);
+    v1->addWidget(start, 3);
     v1->addWidget(flab, 4);
     v1->addWidget(select, 5);
     v1->addSpacing(500);

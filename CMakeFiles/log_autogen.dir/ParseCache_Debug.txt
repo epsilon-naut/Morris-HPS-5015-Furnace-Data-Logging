@@ -9,6 +9,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChartView
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLegend
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLineSeries
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QValueAxis
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QXYSeries
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractaxis.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractseries.h
@@ -19,6 +20,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/display.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qlineseries.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtcharts-config.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtchartsexports.h
+ mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qvalueaxis.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qxyseries.h
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QDeadlineTimer
  mdp:C:/Qt/6.9.1/msvc2022_64/include/QtCore/QEvent

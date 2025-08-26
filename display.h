@@ -11,6 +11,8 @@
 #include <QChart>
 #include <QChartView>
 #include <QLineSeries>
+#include <QValueAxis>
+#include <algorithm>
 
 using namespace std;
 using namespace Qt;
@@ -127,14 +129,40 @@ class Chart : public QChart {
 
     public:
     QLineSeries *series;
+    QValueAxis *x;
+    QValueAxis *y;
+    int pastvals[100];
 
-    Chart(QString name) {
-        series = new QLineSeries();
+    Chart(QString name, QString units) {
+        // general chart
         this->legend()->hide();
-        this->addSeries(series);
-        this->createDefaultAxes();
         this->setTitle(name);
 
+        // axis-specific initialization
+        
+        x = new QValueAxis(); y = new QValueAxis();
+        x->setRange(0, 100); y->setRange(0, 100);
+        x->setTickAnchor(0); y->setTickAnchor(0);
+        x->setTickInterval(10); y->setTickInterval(10);
+        x->setTickType(QValueAxis::TicksDynamic); y->setTickType(QValueAxis::TicksDynamic);
+        x->setTitleText("Count"); y->setTitleText(QString("%1 (%2)").arg(name).arg(units));
+        
+
+        // series-specific initialization
+        series = new QLineSeries();
+        series->setPointsVisible();
+        
+        series->attachAxis(x);
+        series->attachAxis(y);
+        
+        this->addSeries(series);
+
+        //createDefaultAxes();
+        this->addAxis(x, Qt::AlignBottom); this->addAxis(y, Qt::AlignLeft);
+
+        for(int i = 0; i < 100; i++) {
+            pastvals[i] = 0;
+        }
     }
 
     public slots:

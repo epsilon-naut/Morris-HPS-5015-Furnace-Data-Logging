@@ -6,6 +6,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QChartView \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLegend \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QLineSeries \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QValueAxis \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/QXYSeries \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractaxis.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qabstractseries.h \
@@ -16,6 +17,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qlineseries.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtcharts-config.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qtchartsexports.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qvalueaxis.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtCharts/qxyseries.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QDeadlineTimer \
   C:/Qt/6.9.1/msvc2022_64/include/QtCore/QEvent \

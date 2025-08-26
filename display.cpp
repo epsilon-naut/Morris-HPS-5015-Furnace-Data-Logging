@@ -1,11 +1,4 @@
 #include <stdio.h>
-#include <QtWidgets>
-#include <QLabel>
-#include <QLayout>
-#include <string>
-#include <QString>
-#include <QPushButton>
-#include <QThread>
 #include "display.h"
 #include "datalog.h"
 
@@ -72,9 +65,24 @@ void Label::update(int count, int value) {
 
 void Chart::updatevals(int count, int value) {
     this->removeSeries(series);
+
+    if(count > 100) {
+        x->setRange(count-90, count+10); 
+        x->setTickAnchor(count-90);
+        y->setRange(static_cast<double>(*min_element(pastvals, pastvals+99)-50), static_cast<double>(*min_element(pastvals, pastvals+99)+50));
+        for(int i = 1; i < 100; i++) {
+            pastvals[i-1] = pastvals[i];
+        }
+        pastvals[99] = value;
+    } 
+    else {
+        pastvals[count] = value;
+    }
     series->append(count, value);
+    
     this->addSeries(series);
-    this->createDefaultAxes();
+    series->attachAxis(x);
+    series->attachAxis(y);
     this->update();
     emit updated();
 }
@@ -107,8 +115,8 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     QPushButton *start = new QPushButton("Start Logging");
     
-    Chart *chart = new Chart(QString("Temperature"));
-    Chart *chart2 = new Chart(QString("Pressure"));
+    Chart *chart = new Chart(QString("Temperature"), QString("C"));
+    Chart *chart2 = new Chart(QString("Pressure"), QString("bar"));
     
     QChartView *view = new QChartView(chart);
     QChartView *view2 = new QChartView(chart2);

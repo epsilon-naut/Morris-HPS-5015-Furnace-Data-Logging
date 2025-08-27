@@ -47,7 +47,10 @@ template <> constexpr inline auto Log::qt_create_metaobjectdata<qt_meta_tag_ZN3L
         "temp",
         "press_updated",
         "press",
+        "i_want_to_continue",
+        "init",
         "dtlog",
+        "close",
         "refile",
         "filename",
         "refresh_change",
@@ -63,15 +66,21 @@ template <> constexpr inline auto Log::qt_create_metaobjectdata<qt_meta_tag_ZN3L
         QtMocHelpers::SignalData<void(int, int)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 3 }, { QMetaType::Int, 6 },
         }}),
+        // Signal 'i_want_to_continue'
+        QtMocHelpers::SignalData<void()>(7, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'init'
+        QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'dtlog'
-        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'close'
+        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'refile'
-        QtMocHelpers::SlotData<void(QString)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 9 },
+        QtMocHelpers::SlotData<void(QString)>(11, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 12 },
         }}),
         // Slot 'refresh_change'
-        QtMocHelpers::SlotData<void(int)>(10, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 11 },
+        QtMocHelpers::SlotData<void(int)>(13, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 14 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -98,9 +107,12 @@ void Log::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         switch (_id) {
         case 0: _t->temp_updated((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         case 1: _t->press_updated((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 2: _t->dtlog(); break;
-        case 3: _t->refile((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 4: _t->refresh_change((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 2: _t->i_want_to_continue(); break;
+        case 3: _t->init(); break;
+        case 4: _t->dtlog(); break;
+        case 5: _t->close(); break;
+        case 6: _t->refile((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 7: _t->refresh_change((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -108,6 +120,8 @@ void Log::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         if (QtMocHelpers::indexOfMethod<void (Log::*)(int , int )>(_a, &Log::temp_updated, 0))
             return;
         if (QtMocHelpers::indexOfMethod<void (Log::*)(int , int )>(_a, &Log::press_updated, 1))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Log::*)()>(_a, &Log::i_want_to_continue, 2))
             return;
     }
 }
@@ -131,14 +145,14 @@ int Log::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 8;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 8)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 5;
+        _id -= 8;
     }
     return _id;
 }
@@ -153,6 +167,12 @@ void Log::temp_updated(int _t1, int _t2)
 void Log::press_updated(int _t1, int _t2)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 1, nullptr, _t1, _t2);
+}
+
+// SIGNAL 2
+void Log::i_want_to_continue()
+{
+    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
 }
 namespace {
 struct qt_meta_tag_ZN5LabelE_t {};
@@ -242,16 +262,22 @@ template <> constexpr inline auto disp::qt_create_metaobjectdata<qt_meta_tag_ZN4
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "disp",
-        "startlog",
+        "start_log",
         "",
-        "startButtonPressed"
+        "continue_log",
+        "startButtonPressed",
+        "continue_granted"
     };
 
     QtMocHelpers::UintData qt_methods {
-        // Signal 'startlog'
+        // Signal 'start_log'
         QtMocHelpers::SignalData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'continue_log'
+        QtMocHelpers::SignalData<void()>(3, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'startButtonPressed'
-        QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'continue_granted'
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -275,13 +301,17 @@ void disp::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void *
     auto *_t = static_cast<disp *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->startlog(); break;
-        case 1: _t->startButtonPressed(); break;
+        case 0: _t->start_log(); break;
+        case 1: _t->continue_log(); break;
+        case 2: _t->startButtonPressed(); break;
+        case 3: _t->continue_granted(); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
-        if (QtMocHelpers::indexOfMethod<void (disp::*)()>(_a, &disp::startlog, 0))
+        if (QtMocHelpers::indexOfMethod<void (disp::*)()>(_a, &disp::start_log, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (disp::*)()>(_a, &disp::continue_log, 1))
             return;
     }
 }
@@ -305,22 +335,28 @@ int disp::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 2;
+        _id -= 4;
     }
     return _id;
 }
 
 // SIGNAL 0
-void disp::startlog()
+void disp::start_log()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+}
+
+// SIGNAL 1
+void disp::continue_log()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 namespace {
 struct qt_meta_tag_ZN5ChartE_t {};

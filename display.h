@@ -37,6 +37,13 @@ class Log : public QObject {
     double apl;
     string fle;
     int refresh;
+    void *device_data;
+    int n;
+    double voltages[10000];
+    int last_temp;
+    string last_time;
+    int sec_counter;
+    int sec_changed;
 
     Log(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
         nme = name;
@@ -62,13 +69,16 @@ class Log : public QObject {
     }
 
     public slots:
+    void init();
     void dtlog();
+    void close();
     void refile(QString filename);
     void refresh_change(int rate);
 
     signals:
     void temp_updated(int count, int temp);
     void press_updated(int count, int press);
+    void i_want_to_continue();
 
     private: 
     char *time;
@@ -114,8 +124,10 @@ class disp : public QObject {
     disp(Log *lg) {
         lg->moveToThread(&log_thread);
         connect(&log_thread, &QThread::finished, lg, &QObject::deleteLater);
-        connect(this, &disp::startlog, lg, &Log::dtlog);
-        log_thread.start();
+        connect(this, &disp::start_log, lg, &Log::init);
+        connect(lg, &Log::i_want_to_continue, this, &disp::continue_granted);
+        connect(this, &disp::continue_log, lg, &Log::dtlog);
+        connect(&log_thread, &QThread::finished, lg, &Log::close);
     }
 
     ~disp() {
@@ -125,8 +137,11 @@ class disp : public QObject {
 
     public slots:
         void startButtonPressed();
+        void continue_granted();
+
     signals:
-        void startlog();
+        void start_log();
+        void continue_log();
 };
 
 class Chart : public QChart {
@@ -137,7 +152,7 @@ class Chart : public QChart {
     QLineSeries *series;
     QValueAxis *x;
     QValueAxis *y;
-    int pastvals[100];
+    int pastvals[1000];
     int cnt;
     int val;
     int ind;
@@ -154,7 +169,7 @@ class Chart : public QChart {
         x = new QValueAxis(); y = new QValueAxis();
         x->setRange(0, 50); y->setRange(-50, 50);
         x->setTickType(QValueAxis::TicksFixed); y->setTickType(QValueAxis::TicksFixed);
-        x->setTickCount(10); y->setTickCount(5);
+        x->setTickCount(11); y->setTickCount(7);
         x->setTitleText("Count"); y->setTitleText(QString("%1 (%2)").arg(name).arg(units));
         
 
@@ -174,7 +189,7 @@ class Chart : public QChart {
         //createDefaultAxes();
         this->addAxis(x, Qt::AlignBottom); this->addAxis(y, Qt::AlignLeft);
 
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 1000; i++) {
             pastvals[i] = 0;
         }
     }
@@ -262,6 +277,8 @@ class viewSelect : public QComboBox {
     viewSelect() {
         this->addItem("All Data");
         this->addItem("Last 50 Values");
+        this->addItem("Last 100 Values");
+        this->addItem("Last 1000 Values");
     }
 
     public slots:
@@ -279,9 +296,9 @@ class refreshSelect : public QComboBox {
     public:
 
     refreshSelect() {
-        this->addItem("1 (All)");
-        this->addItem("6 (per second)");
-        this->addItem("360 (per minute)");
+        this->addItem("All");
+        this->addItem("Per second");
+        this->addItem("Per minute");
     }
 
     public slots:

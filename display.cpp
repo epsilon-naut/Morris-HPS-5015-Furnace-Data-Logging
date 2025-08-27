@@ -5,58 +5,75 @@
 using namespace std;
 using namespace Qt;
 
-void Log::dtlog() {
+void Log::init() {
+    start_device(nme, cfg, smp, inp, off, apl, &device_data);
 
-    void *device_data;
-
-    // time and tracking related variables
-    char *t = (char *)malloc(26*sizeof(char));
+    // time related variables
+    last_time = "";
+    sec_counter = 0;
+    sec_changed = 0;
 
     // pressure related variables
-    double voltages[10000];
     for(int i = 0; i < 10000; i++) {
         voltages[i] = 0;
     }
-    int n = 0;
+    n = 0;
 
     // temperature related variables
-    int last_temp = 0;
-
-    start_device(nme, cfg, smp, inp, off, apl, &device_data);
+    last_temp = 0;
 
     //csv initialize
     string colnames[6] = {"Time", "Count", "Temperature (C)", "Pressure (bar)", "Average Pressure Voltage (mV)", "Analog Pressure Reading (mV)"};
     write_csv_head(fle, colnames, 6);
 
-    for(int i = 60; i < 100000; i--) { // this is done on purpose, changing i changes the preset value
-        if (i == 0) {
-            printf("Starting Logging. \n");
-        }
-        if(i < 0) {
-            datalog(device_data, frq, smp, inp, out, dly, aIn, asp, off, apl, fle, &time, &temp, &measurement, &count);
-            convert_to_pressure(voltages, measurement, &n, &press, &raw);
-            if(temp == -1) {
-                temp = last_temp;
-                }
-            else {
-                last_temp = temp;
-                }
-            if (count % refresh == 0) {
-                emit temp_updated(count, temp);
-                emit press_updated(count, press);
-            }
-            write_csv(fle, time, temp, press, raw, measurement, count);
-        }
+    emit i_want_to_continue();
+}
+
+void Log::dtlog() {
+
+    datalog(device_data, frq, smp, inp, out, dly, aIn, asp, off, apl, fle, &time, &temp, &measurement, &count);
+    convert_to_pressure(voltages, measurement, &n, &press, &raw);
+    if(temp == -1) {
+        temp = last_temp;
     }
+    else {
+        last_temp = temp;
+    }
+    if(string(time, 26) != last_time) {
+        last_time = string(time, 26);
+        sec_counter++;
+    }
+    if(refresh == 1) {
+        emit temp_updated(count, temp);
+        emit press_updated(count, press);
+    }
+    if((refresh == 6) && (sec_counter-sec_changed)) {
+        emit temp_updated(count, temp);
+        emit press_updated(count, press);
+    }
+    if((refresh == 360) && (sec_counter-sec_changed) && (sec_changed % 60 == 0)) {
+        emit temp_updated(count, temp);
+        emit press_updated(count, press);
+    }
+    if(sec_counter != sec_changed) {
+        sec_changed++;
+    }
+    write_csv(fle, time, temp, press, raw, measurement, count);
 
-    // free time 
-    free(t);
+    emit i_want_to_continue();
+}
 
+void Log::close() {
     close_device(device_data);
 }
 
 void disp::startButtonPressed() {
-    emit startlog();
+    log_thread.start();
+    emit start_log();
+}
+
+void disp::continue_granted() {
+    emit continue_log();
 }
 
 void Label::update(int count, int value) {
@@ -70,31 +87,56 @@ void Chart::updateaxes(int index) {
     if(ind == 0) {
         if(cnt > 50) {
             x->setRange(0, cnt+10); 
-            x->setTickInterval((int)((cnt+10)/10));
-            for(int i = 1; i < 50; i++) {
+            for(int i = 951; i < 1000; i++) {
                 pastvals[i-1] = pastvals[i];
             }
-            pastvals[49] = val;
+            pastvals[999] = val;
         } 
         else {
-            pastvals[cnt-1] = val;
+            pastvals[950+cnt-1] = val;
         }
         y->setRange(static_cast<double>(min_val)-30, static_cast<double>(max_val)+30);
     }    
-    else {
+    else if (ind == 1) {
         if(cnt > 50) {
-            x->setRange(cnt-40, cnt+10);
-            x->setTickAnchor(cnt-40); 
-            x->setTickInterval(5);
-            for(int i = 1; i < 50; i++) {
+            x->setRange(cnt-50, cnt+10);
+            for(int i = 951; i < 1000; i++) {
                 pastvals[i-1] = pastvals[i];
             }
-            pastvals[49] = val;
+            pastvals[999] = val;
         } 
         else {
+            pastvals[950+cnt-1] = val;
+        }
+        y->setRange(static_cast<double>(min(*min_element(pastvals+950, pastvals+999),*max_element(pastvals+950, pastvals+999)-30)), static_cast<double>(*max_element(pastvals+950, pastvals+999)+30));
+    }
+    else if (ind == 2) {
+        if(cnt > 100) {
+            x->setRange(cnt-90, cnt+10);
+            for(int i = 901; i < 1000; i++) {
+                pastvals[i-1] = pastvals[i];
+            }
+            pastvals[999] = val;
+        } 
+        else {
+            x->setRange(0, 100);
+            pastvals[900+cnt-1] = val;
+        }
+        y->setRange(static_cast<double>(min(*min_element(pastvals+900, pastvals+999),*max_element(pastvals+900, pastvals+999)-30)), static_cast<double>(*max_element(pastvals+900, pastvals+999)+30));
+    }
+    else if (ind == 3) {
+        if(cnt > 1000) {
+            x->setRange(cnt-990, cnt+10);
+            for(int i = 1; i < 1000; i++) {
+                pastvals[i-1] = pastvals[i];
+            }
+            pastvals[999] = val;
+        } 
+        else {
+            x->setRange(0, 1000);
             pastvals[cnt-1] = val;
         }
-        y->setRange(static_cast<double>(min(*min_element(pastvals, pastvals+49),*max_element(pastvals, pastvals+49)-30)), static_cast<double>(*max_element(pastvals, pastvals+49)+30));
+        y->setRange(static_cast<double>(min(*min_element(pastvals, pastvals+999),*max_element(pastvals, pastvals+999)-30)), static_cast<double>(*max_element(pastvals, pastvals+999)+30));
     }
     
     series->attachAxis(x);
@@ -208,6 +250,7 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     Log *log = new Log(name, config, out_freq, sample_rate, chI, chO, del, achI, asr, offset, amp, return_filename(save->filename));
     disp *dis = new disp(log);
+    dis->setParent(&window);
 
     QPushButton *start = new QPushButton("Start Logging");
 

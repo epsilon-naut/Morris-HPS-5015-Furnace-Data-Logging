@@ -41,7 +41,7 @@ void Log::dtlog() {
             else {
                 last_temp = temp;
                 }
-            if(count % 6 == 0) {      
+            if (count % refresh == 0) {
                 emit temp_updated(count, temp);
                 emit press_updated(count, press);
             }
@@ -69,32 +69,34 @@ void Chart::updateaxes(int index) {
     ind = index;
     if(ind == 0) {
         if(cnt > 50) {
-        x->setRange(0, cnt+10); 
-        x->setTickInterval((int)((cnt+10)/10));
-        for(int i = 1; i < 50; i++) {
-            pastvals[i-1] = pastvals[i];
-        }
+            x->setRange(0, cnt+10); 
+            x->setTickInterval((int)((cnt+10)/10));
+            for(int i = 1; i < 50; i++) {
+                pastvals[i-1] = pastvals[i];
+            }
             pastvals[49] = val;
         } 
         else {
             pastvals[cnt-1] = val;
         }
+        y->setRange(static_cast<double>(min_val)-30, static_cast<double>(max_val)+30);
     }    
     else {
         if(cnt > 50) {
-        x->setRange(cnt-40, cnt+10);
-        x->setTickAnchor(cnt-40); 
-        x->setTickInterval(5);
-        for(int i = 1; i < 50; i++) {
-            pastvals[i-1] = pastvals[i];
-        }
+            x->setRange(cnt-40, cnt+10);
+            x->setTickAnchor(cnt-40); 
+            x->setTickInterval(5);
+            for(int i = 1; i < 50; i++) {
+                pastvals[i-1] = pastvals[i];
+            }
             pastvals[49] = val;
         } 
         else {
             pastvals[cnt-1] = val;
         }
+        y->setRange(static_cast<double>(min(*min_element(pastvals, pastvals+49),*max_element(pastvals, pastvals+49)-30)), static_cast<double>(*max_element(pastvals, pastvals+49)+30));
     }
-    y->setRange(static_cast<double>(min(*min_element(pastvals, pastvals+49),*max_element(pastvals, pastvals+49)-50)), static_cast<double>(*max_element(pastvals, pastvals+49)+50));
+    
     series->attachAxis(x);
     series->attachAxis(y);
     this->update();
@@ -104,6 +106,12 @@ void Chart::updateaxes(int index) {
 void Chart::updatevals(int count, int value) {
     cnt = count;
     val = value;
+    if(val > max_val) {
+        max_val = val;
+    }
+    if(val < min_val) {
+        min_val = val;
+    }
     
     series->append(cnt, val);
 
@@ -159,6 +167,22 @@ void viewSelect::changed() {
     emit index(this->currentIndex());
 }
 
+void Log::refresh_change(int rate) {
+    refresh = rate;
+}
+
+void refreshSelect::changed() {
+    if(this->currentIndex() == 0) {
+        emit refresh_rate(1);
+    }
+    else if(this->currentIndex() == 1) {
+        emit refresh_rate(6);
+    }
+    else {
+        emit refresh_rate(360);
+    }
+}
+
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
     QApplication app(argc, argv);
     QWidget window;
@@ -169,6 +193,7 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     //layout declarations
     QGridLayout hori(&window);
     QVBoxLayout *v1 = new QVBoxLayout(&window);
+    QHBoxLayout *refresh = new QHBoxLayout(&window);
 
     //add vertical layouts to larger horizontal layout
     hori.addLayout(v1, 0, 0, 3, 1);
@@ -196,17 +221,23 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     viewSelect *select = new viewSelect();
 
+    QLabel *reflabel = new QLabel("Refresh rate: "); 
+    refreshSelect *ref = new refreshSelect();
+
     v1->addWidget(temp, 0);
     v1->addWidget(press, 1);
     v1->addWidget(savebt, 2);
-    v1->addWidget(start, 3);
-    v1->addWidget(flab, 4);
-    v1->addWidget(select, 5);
-    v1->addSpacing(500);
+    v1->addLayout(refresh, 3);
+    v1->addWidget(start, 4);
+    v1->addWidget(flab, 5);
+    v1->addWidget(select, 6);
+    v1->addSpacing(400);
     
-
     hori.addWidget(view, 0, 1, 2, 5);
     hori.addWidget(view2, 2, 1, 2, 5);
+
+    refresh->addWidget(reflabel, 0);
+    refresh->addWidget(ref, 1);
 
     QObject::connect(start, &QPushButton::clicked, dis, &disp::startButtonPressed);
     QObject::connect(log, &Log::temp_updated, temp, &Label::update);
@@ -219,6 +250,8 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     QObject::connect(select, &QComboBox::currentIndexChanged, select, &viewSelect::changed);
     QObject::connect(select, &viewSelect::index, chart, &Chart::updateaxes);
     QObject::connect(select, &viewSelect::index, chart2, &Chart::updateaxes);
+    QObject::connect(ref, &QComboBox::currentIndexChanged, ref, &refreshSelect::changed);
+    QObject::connect(ref, &refreshSelect::refresh_rate, log, &Log::refresh_change);
     //QObject::connect(chart, &Chart::updated, scene, &Scene::redraw);
 
     view->show();

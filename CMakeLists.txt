@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/msvc2022_64/")
 
-
 project(log VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)

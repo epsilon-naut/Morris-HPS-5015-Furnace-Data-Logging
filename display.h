@@ -36,6 +36,7 @@ class Log : public QObject {
     double off;
     double apl;
     string fle;
+    int refresh;
 
     Log(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
         nme = name;
@@ -57,11 +58,13 @@ class Log : public QObject {
         raw = 0;
         measurement = 0;
         count = 0;
+        refresh = 1;
     }
 
     public slots:
     void dtlog();
     void refile(QString filename);
+    void refresh_change(int rate);
 
     signals:
     void temp_updated(int count, int temp);
@@ -138,6 +141,8 @@ class Chart : public QChart {
     int cnt;
     int val;
     int ind;
+    int min_val;
+    int max_val;
 
     Chart(QString name, QString units) {
         // general chart
@@ -156,6 +161,8 @@ class Chart : public QChart {
         // series-specific initialization
         cnt = 1;
         val = 0;
+        min_val = 1500;
+        max_val = -10000;
         series = new QLineSeries();
         series->setPointsVisible();
         
@@ -264,6 +271,27 @@ class viewSelect : public QComboBox {
         void index(int i);
 
 };
+
+class refreshSelect : public QComboBox {
+
+    Q_OBJECT
+
+    public:
+
+    refreshSelect() {
+        this->addItem("1 (All)");
+        this->addItem("6 (per second)");
+        this->addItem("360 (per minute)");
+    }
+
+    public slots:
+        void changed();
+
+    signals:
+        void refresh_rate(int rate);
+
+};
+
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);
 

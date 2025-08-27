@@ -49,7 +49,9 @@ template <> constexpr inline auto Log::qt_create_metaobjectdata<qt_meta_tag_ZN3L
         "press",
         "dtlog",
         "refile",
-        "filename"
+        "filename",
+        "refresh_change",
+        "rate"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -66,6 +68,10 @@ template <> constexpr inline auto Log::qt_create_metaobjectdata<qt_meta_tag_ZN3L
         // Slot 'refile'
         QtMocHelpers::SlotData<void(QString)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 9 },
+        }}),
+        // Slot 'refresh_change'
+        QtMocHelpers::SlotData<void(int)>(10, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 11 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -94,6 +100,7 @@ void Log::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         case 1: _t->press_updated((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         case 2: _t->dtlog(); break;
         case 3: _t->refile((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 4: _t->refresh_change((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -124,14 +131,14 @@ int Log::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 5)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
 }
@@ -763,6 +770,98 @@ int viewSelect::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 
 // SIGNAL 0
 void viewSelect::index(int _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
+}
+namespace {
+struct qt_meta_tag_ZN13refreshSelectE_t {};
+} // unnamed namespace
+
+template <> constexpr inline auto refreshSelect::qt_create_metaobjectdata<qt_meta_tag_ZN13refreshSelectE_t>()
+{
+    namespace QMC = QtMocConstants;
+    QtMocHelpers::StringRefStorage qt_stringData {
+        "refreshSelect",
+        "refresh_rate",
+        "",
+        "rate",
+        "changed"
+    };
+
+    QtMocHelpers::UintData qt_methods {
+        // Signal 'refresh_rate'
+        QtMocHelpers::SignalData<void(int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 3 },
+        }}),
+        // Slot 'changed'
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPublic, QMetaType::Void),
+    };
+    QtMocHelpers::UintData qt_properties {
+    };
+    QtMocHelpers::UintData qt_enums {
+    };
+    return QtMocHelpers::metaObjectData<refreshSelect, qt_meta_tag_ZN13refreshSelectE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+            qt_methods, qt_properties, qt_enums);
+}
+Q_CONSTINIT const QMetaObject refreshSelect::staticMetaObject = { {
+    QMetaObject::SuperData::link<QComboBox::staticMetaObject>(),
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN13refreshSelectE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN13refreshSelectE_t>.data,
+    qt_static_metacall,
+    nullptr,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN13refreshSelectE_t>.metaTypes,
+    nullptr
+} };
+
+void refreshSelect::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    auto *_t = static_cast<refreshSelect *>(_o);
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->refresh_rate((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 1: _t->changed(); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (refreshSelect::*)(int )>(_a, &refreshSelect::refresh_rate, 0))
+            return;
+    }
+}
+
+const QMetaObject *refreshSelect::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *refreshSelect::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN13refreshSelectE_t>.strings))
+        return static_cast<void*>(this);
+    return QComboBox::qt_metacast(_clname);
+}
+
+int refreshSelect::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QComboBox::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 2)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 2;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 2)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 2;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void refreshSelect::refresh_rate(int _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }

@@ -48,12 +48,12 @@ void Log::dtlog() {
         emit press_updated(count, press);
     }
     if((refresh == 6) && (sec_counter-sec_changed)) {
-        emit temp_updated(count, temp);
-        emit press_updated(count, press);
+        emit temp_updated(sec_counter, temp);
+        emit press_updated(sec_counter, press);
     }
     if((refresh == 360) && (sec_counter-sec_changed) && (sec_changed % 60 == 0)) {
-        emit temp_updated(count, temp);
-        emit press_updated(count, press);
+        emit temp_updated(static_cast<int>(sec_changed/60), temp);
+        emit press_updated(static_cast<int>(sec_changed/60), press);
     }
     if(sec_counter != sec_changed) {
         sec_changed++;
@@ -264,7 +264,7 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     viewSelect *select = new viewSelect();
 
-    QLabel *reflabel = new QLabel("Refresh rate: "); 
+    QLabel *reflabel = new QLabel("Refresh Rate: "); 
     refreshSelect *ref = new refreshSelect();
 
     v1->addWidget(temp, 0);

@@ -297,8 +297,8 @@ class refreshSelect : public QComboBox {
 
     refreshSelect() {
         this->addItem("All");
-        this->addItem("Per second");
-        this->addItem("Per minute");
+        this->addItem("Per Second");
+        this->addItem("Per Minute");
     }
 
     public slots:

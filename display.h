@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <QFileDialog>
 #include <QComboBox>
+#include <QLineEdit>
+#include <QCheckBox>
 
 using namespace std;
 using namespace Qt;
@@ -114,36 +116,6 @@ class Label : public QLabel {
 
 };
 
-class disp : public QObject {
-    
-    Q_OBJECT
-    QThread log_thread;
-
-    public:
-    
-    disp(Log *lg) {
-        lg->moveToThread(&log_thread);
-        connect(&log_thread, &QThread::finished, lg, &QObject::deleteLater);
-        connect(this, &disp::start_log, lg, &Log::init);
-        connect(lg, &Log::i_want_to_continue, this, &disp::continue_granted);
-        connect(this, &disp::continue_log, lg, &Log::dtlog);
-        connect(&log_thread, &QThread::finished, lg, &Log::close);
-    }
-
-    ~disp() {
-        log_thread.quit();
-        log_thread.wait();
-    }
-
-    public slots:
-        void startButtonPressed();
-        void continue_granted();
-
-    signals:
-        void start_log();
-        void continue_log();
-};
-
 class Chart : public QChart {
 
     Q_OBJECT
@@ -156,8 +128,13 @@ class Chart : public QChart {
     int cnt;
     int val;
     int ind;
+    int ind_y;
     int min_val;
     int max_val;
+    double yb;
+    double yt;
+    double xb;
+    double xt;
 
     Chart(QString name, QString units) {
         // general chart
@@ -165,9 +142,10 @@ class Chart : public QChart {
         this->setTitle(name);
 
         // axis-specific initialization
-        ind = 0;
+        ind = 0; ind_y = 10;
+        xb = 0; xt = 50; yb = 0; yt = 100;
         x = new QValueAxis(); y = new QValueAxis();
-        x->setRange(0, 50); y->setRange(-50, 50);
+        x->setRange(0, 50); y->setRange(0, 100);
         x->setTickType(QValueAxis::TicksFixed); y->setTickType(QValueAxis::TicksFixed);
         x->setTickCount(11); y->setTickCount(7);
         x->setTitleText("Count"); y->setTitleText(QString("%1 (%2)").arg(name).arg(units));
@@ -196,10 +174,12 @@ class Chart : public QChart {
 
     public slots:
         void updatevals(int count, int value);
-        void updateaxes(int index);
+        void updateaxes(int index, int indey);
+        void updatecustomy(int ybot, int ytop);
+        void updatecustomx(int xbot, int xtop);
 
     signals:
-        void updated();
+        void updated(int ind_x, int indy);
 };
 
 class Scene : public QObject {
@@ -279,14 +259,33 @@ class viewSelect : public QComboBox {
         this->addItem("Last 50 Values");
         this->addItem("Last 100 Values");
         this->addItem("Last 1000 Values");
+        this->addItem("Custom X Axis");
     }
 
     public slots:
         void changed();
 
     signals:
-        void index(int i);
+        void index(int i, int j);
 
+};
+
+class ySelect : public QComboBox {
+
+    Q_OBJECT
+
+    public:
+
+    ySelect() {
+        this->addItem("Auto");
+        this->addItem("Custom Y Axis");
+    }
+
+    public slots:
+        void changed();
+
+    signals:
+        void indey(int i, int j);
 };
 
 class refreshSelect : public QComboBox {
@@ -309,6 +308,124 @@ class refreshSelect : public QComboBox {
 
 };
 
+class botEdit : public QLineEdit {
+
+    Q_OBJECT
+
+    public:
+    botEdit(QString text) {
+        this->setText(text);
+    }
+
+    public slots:
+    void updated(QString raw);
+
+    signals:
+    void update(int val, int ex);
+};
+
+class topEdit : public QLineEdit {
+
+    Q_OBJECT
+
+    public:
+    topEdit(QString text) {
+        this->setText(text);
+    }
+
+    public slots:
+    void updated(QString raw);
+
+    signals:
+    void update(int ex, int val);
+};
+
+class chartCheck : public QObject {
+
+    Q_OBJECT
+
+    public:
+
+    Chart *c1;
+    Chart *c2;
+    QCheckBox *tc;
+    QCheckBox *pc;
+    viewSelect *xsel;
+    ySelect *ysel;
+    botEdit *yb;
+    topEdit *yt;
+    botEdit *xb;
+    topEdit *xt;
+
+    chartCheck(botEdit *ybedit, topEdit *ytedit, botEdit *xbedit, topEdit *xtedit, viewSelect *xselect, ySelect *yselect, Chart *chart, Chart *chart2) {
+        xsel = xselect;
+        ysel = yselect;
+        yb = ybedit;
+        yt = ytedit;
+        c1 = chart;
+        c2 = chart2;
+        tc = new QCheckBox("Temperature");
+        pc = new QCheckBox("Pressure");
+        state = 0;
+        connect(tc, &QCheckBox::checkStateChanged, this, &chartCheck::checked);
+        connect(pc, &QCheckBox::checkStateChanged, this, &chartCheck::checked);
+    }
+
+    public slots:
+    void checked();
+
+    private:
+    int state;
+};
+
+class indyLabel : public QLabel {
+
+    Q_OBJECT
+
+    public:
+
+    int indy;
+
+    indyLabel() {
+        indy = 5;
+        setText(QString("Ind_y: %1").arg(indy));
+    }
+
+    public slots:
+        void update(int ex, int ind_y);
+
+};
+
+class disp : public QObject {
+    
+    Q_OBJECT
+    QThread log_thread;
+
+    public:
+    
+    disp(Log *lg) {
+        lg->moveToThread(&log_thread);
+        connect(&log_thread, &QThread::finished, lg, &QObject::deleteLater);
+        connect(this, &disp::start_log, lg, &Log::init);
+        connect(lg, &Log::i_want_to_continue, this, &disp::continue_granted);
+        connect(this, &disp::continue_log, lg, &Log::dtlog);
+        connect(&log_thread, &QThread::finished, lg, &Log::close);
+        
+    }
+
+    ~disp() {
+        log_thread.quit();
+        log_thread.wait();
+    }
+
+    public slots:
+        void startButtonPressed();
+        void continue_granted();
+
+    signals:
+        void start_log();
+        void continue_log();
+};
 
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename);
 

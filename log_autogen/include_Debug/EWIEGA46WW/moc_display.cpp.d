@@ -442,6 +442,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowdefs_win.h \
   C:/Qt/6.9.1/msvc2022_64/include/QtGui/qwindowsmimeconverter.h \
+  C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QCheckBox \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QComboBox \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QCommonStyle \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QFileDialog \
@@ -449,6 +450,7 @@ C:/Users/Jeff/Documents/Research/HPS5015/code/log_autogen/include_Debug/EWIEGA46
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QGraphicsWidget \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLabel \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLayout \
+  C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QLineEdit \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QPushButton \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QScrollerProperties \
   C:/Qt/6.9.1/msvc2022_64/include/QtWidgets/QtWidgets \

@@ -161,7 +161,7 @@ void rewrap(uint8_t *data, int n, uint8_t **nums) {
 }
 
 // analog pressure conversion function
-void convert_to_pressure(double *voltages, double measurement, int *n, int *pressure, double *raw) {
+void convert_to_pressure(double *voltages, double measurement, int *n, int *pressure, double *raw, double a, double b) {
     // fill the voltages array with measurements
     if(*n < 10000) {
         voltages[*n] = measurement;
@@ -180,7 +180,7 @@ void convert_to_pressure(double *voltages, double measurement, int *n, int *pres
     for(int i = 0; i < *n; i++) {
         sum += voltages[i];
     }
-    *pressure = round((sum/(*n)*6.33-8.82));
+    *pressure = round((sum/(*n)*a+b));
     *raw = (sum/(*n));
 
 }

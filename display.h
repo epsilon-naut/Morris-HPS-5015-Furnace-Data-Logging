@@ -46,8 +46,10 @@ class Log : public QObject {
     string last_time;
     int sec_counter;
     int sec_changed;
+    double a;
+    double b;
 
-    Log(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
+    Log(string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename, double press_a, double press_b) {
         nme = name;
         cfg = config;
         frq = out_freq;
@@ -60,6 +62,8 @@ class Log : public QObject {
         off = offset;
         apl = amp;
         fle = filename;
+        a = press_a;
+        b = press_b;
         
         time = (char *)malloc(26 * sizeof(char));
         temp = 0;
@@ -76,6 +80,7 @@ class Log : public QObject {
     void close();
     void refile(QString filename);
     void refresh_change(int rate);
+    void change_curve(double coeff, double shift);
 
     signals:
     void temp_updated(int count, int temp);
@@ -142,7 +147,7 @@ class Chart : public QChart {
         this->setTitle(name);
 
         // axis-specific initialization
-        ind = 0; ind_y = 10;
+        ind = 0; ind_y = 0;
         xb = 0; xt = 50; yb = 0; yt = 100;
         x = new QValueAxis(); y = new QValueAxis();
         x->setRange(0, 50); y->setRange(0, 100);
@@ -180,6 +185,8 @@ class Chart : public QChart {
 
     signals:
         void updated(int ind_x, int indy);
+        void reset_y(double bot, double top, int aut);
+        void reset_x(double bot, double top, int aut);
 };
 
 class Scene : public QObject {
@@ -313,12 +320,16 @@ class botEdit : public QLineEdit {
     Q_OBJECT
 
     public:
+    int modifiable;
+
     botEdit(QString text) {
         this->setText(text);
+        modifiable = 0;
     }
 
     public slots:
-    void updated(QString raw);
+    void updated();
+    void reset(double bot, double top, int aut);
 
     signals:
     void update(int val, int ex);
@@ -329,12 +340,16 @@ class topEdit : public QLineEdit {
     Q_OBJECT
 
     public:
+    int modifiable;
+
     topEdit(QString text) {
         this->setText(text);
+        modifiable = 0;
     }
 
     public slots:
-    void updated(QString raw);
+    void updated();
+    void reset(double bot, double top, int aut);
 
     signals:
     void update(int ex, int val);
@@ -362,6 +377,8 @@ class chartCheck : public QObject {
         ysel = yselect;
         yb = ybedit;
         yt = ytedit;
+        xb = xbedit;
+        xt = xtedit;
         c1 = chart;
         c2 = chart2;
         tc = new QCheckBox("Temperature");
@@ -373,6 +390,9 @@ class chartCheck : public QObject {
 
     public slots:
     void checked();
+
+    signals:
+    void update(int ind, int ind_y);
 
     private:
     int state;
@@ -394,6 +414,49 @@ class indyLabel : public QLabel {
     public slots:
         void update(int ex, int ind_y);
 
+};
+
+class pressChange : public QHBoxLayout {
+
+    Q_OBJECT
+
+    public:
+    QLabel *colabel;
+    QLineEdit *coedit;
+    QLabel *shlabel;
+    QLineEdit *shedit;
+    QHBoxLayout *co;
+    QHBoxLayout *sh;
+    double coeff;
+    double shift;
+    string fle;
+
+    pressChange(double a, double b, string filename) {
+        coeff = a;
+        shift = b;
+        fle = filename;
+        colabel = new QLabel("Pressure Coefficient: ");
+        coedit = new QLineEdit(QString("%1").arg(coeff));        
+        shlabel = new QLabel("Shift: ");
+        shedit = new QLineEdit(QString("%1").arg(shift));   
+        co = new QHBoxLayout();
+        sh = new QHBoxLayout();
+        co->addWidget(colabel, 0);
+        co->addWidget(coedit, 1);
+        sh->addWidget(shlabel, 0);
+        sh->addWidget(shedit, 1);
+        this->addLayout(co, 0);
+        this->addLayout(sh, 1);
+        connect(coedit, &QLineEdit::returnPressed, this, &pressChange::edit_coeff);
+        connect(shedit, &QLineEdit::returnPressed, this, &pressChange::edit_shift);
+    }
+
+    public slots:
+    void edit_coeff();
+    void edit_shift();
+    
+    signals:
+    void edited(double coe, double shi);
 };
 
 class disp : public QObject {

@@ -54,7 +54,10 @@ template <> constexpr inline auto Log::qt_create_metaobjectdata<qt_meta_tag_ZN3L
         "refile",
         "filename",
         "refresh_change",
-        "rate"
+        "rate",
+        "change_curve",
+        "coeff",
+        "shift"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -81,6 +84,10 @@ template <> constexpr inline auto Log::qt_create_metaobjectdata<qt_meta_tag_ZN3L
         // Slot 'refresh_change'
         QtMocHelpers::SlotData<void(int)>(13, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 14 },
+        }}),
+        // Slot 'change_curve'
+        QtMocHelpers::SlotData<void(double, double)>(15, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Double, 16 }, { QMetaType::Double, 17 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -113,6 +120,7 @@ void Log::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         case 5: _t->close(); break;
         case 6: _t->refile((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 7: _t->refresh_change((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 8: _t->change_curve((*reinterpret_cast< std::add_pointer_t<double>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[2]))); break;
         default: ;
         }
     }
@@ -145,14 +153,14 @@ int Log::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 9;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 9)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 8;
+        _id -= 9;
     }
     return _id;
 }
@@ -266,6 +274,11 @@ template <> constexpr inline auto Chart::qt_create_metaobjectdata<qt_meta_tag_ZN
         "",
         "ind_x",
         "indy",
+        "reset_y",
+        "bot",
+        "top",
+        "aut",
+        "reset_x",
         "updatevals",
         "count",
         "value",
@@ -285,21 +298,29 @@ template <> constexpr inline auto Chart::qt_create_metaobjectdata<qt_meta_tag_ZN
         QtMocHelpers::SignalData<void(int, int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 3 }, { QMetaType::Int, 4 },
         }}),
+        // Signal 'reset_y'
+        QtMocHelpers::SignalData<void(double, double, int)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Double, 6 }, { QMetaType::Double, 7 }, { QMetaType::Int, 8 },
+        }}),
+        // Signal 'reset_x'
+        QtMocHelpers::SignalData<void(double, double, int)>(9, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Double, 6 }, { QMetaType::Double, 7 }, { QMetaType::Int, 8 },
+        }}),
         // Slot 'updatevals'
-        QtMocHelpers::SlotData<void(int, int)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 6 }, { QMetaType::Int, 7 },
+        QtMocHelpers::SlotData<void(int, int)>(10, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 11 }, { QMetaType::Int, 12 },
         }}),
         // Slot 'updateaxes'
-        QtMocHelpers::SlotData<void(int, int)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 9 }, { QMetaType::Int, 10 },
+        QtMocHelpers::SlotData<void(int, int)>(13, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 14 }, { QMetaType::Int, 15 },
         }}),
         // Slot 'updatecustomy'
-        QtMocHelpers::SlotData<void(int, int)>(11, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 12 }, { QMetaType::Int, 13 },
+        QtMocHelpers::SlotData<void(int, int)>(16, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 17 }, { QMetaType::Int, 18 },
         }}),
         // Slot 'updatecustomx'
-        QtMocHelpers::SlotData<void(int, int)>(14, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 15 }, { QMetaType::Int, 16 },
+        QtMocHelpers::SlotData<void(int, int)>(19, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 20 }, { QMetaType::Int, 21 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -325,15 +346,21 @@ void Chart::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void 
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->updated((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 1: _t->updatevals((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 2: _t->updateaxes((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 3: _t->updatecustomy((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 4: _t->updatecustomx((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 1: _t->reset_y((*reinterpret_cast< std::add_pointer_t<double>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
+        case 2: _t->reset_x((*reinterpret_cast< std::add_pointer_t<double>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
+        case 3: _t->updatevals((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 4: _t->updateaxes((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 5: _t->updatecustomy((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 6: _t->updatecustomx((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
         if (QtMocHelpers::indexOfMethod<void (Chart::*)(int , int )>(_a, &Chart::updated, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Chart::*)(double , double , int )>(_a, &Chart::reset_y, 1))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Chart::*)(double , double , int )>(_a, &Chart::reset_x, 2))
             return;
     }
 }
@@ -357,14 +384,14 @@ int Chart::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 7;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 7)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 5;
+        _id -= 7;
     }
     return _id;
 }
@@ -373,6 +400,18 @@ int Chart::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void Chart::updated(int _t1, int _t2)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
+}
+
+// SIGNAL 1
+void Chart::reset_y(double _t1, double _t2, int _t3)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 1, nullptr, _t1, _t2, _t3);
+}
+
+// SIGNAL 2
+void Chart::reset_x(double _t1, double _t2, int _t3)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 2, nullptr, _t1, _t2, _t3);
 }
 namespace {
 struct qt_meta_tag_ZN5SceneE_t {};
@@ -925,7 +964,10 @@ template <> constexpr inline auto botEdit::qt_create_metaobjectdata<qt_meta_tag_
         "val",
         "ex",
         "updated",
-        "raw"
+        "reset",
+        "bot",
+        "top",
+        "aut"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -934,8 +976,10 @@ template <> constexpr inline auto botEdit::qt_create_metaobjectdata<qt_meta_tag_
             { QMetaType::Int, 3 }, { QMetaType::Int, 4 },
         }}),
         // Slot 'updated'
-        QtMocHelpers::SlotData<void(QString)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 6 },
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'reset'
+        QtMocHelpers::SlotData<void(double, double, int)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Double, 7 }, { QMetaType::Double, 8 }, { QMetaType::Int, 9 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -961,7 +1005,8 @@ void botEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->update((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 1: _t->updated((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 1: _t->updated(); break;
+        case 2: _t->reset((*reinterpret_cast< std::add_pointer_t<double>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
         default: ;
         }
     }
@@ -990,14 +1035,14 @@ int botEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 3;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 3)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
@@ -1021,7 +1066,10 @@ template <> constexpr inline auto topEdit::qt_create_metaobjectdata<qt_meta_tag_
         "ex",
         "val",
         "updated",
-        "raw"
+        "reset",
+        "bot",
+        "top",
+        "aut"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -1030,8 +1078,10 @@ template <> constexpr inline auto topEdit::qt_create_metaobjectdata<qt_meta_tag_
             { QMetaType::Int, 3 }, { QMetaType::Int, 4 },
         }}),
         // Slot 'updated'
-        QtMocHelpers::SlotData<void(QString)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 6 },
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'reset'
+        QtMocHelpers::SlotData<void(double, double, int)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Double, 7 }, { QMetaType::Double, 8 }, { QMetaType::Int, 9 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -1057,7 +1107,8 @@ void topEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->update((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 1: _t->updated((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 1: _t->updated(); break;
+        case 2: _t->reset((*reinterpret_cast< std::add_pointer_t<double>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
         default: ;
         }
     }
@@ -1086,14 +1137,14 @@ int topEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 3;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 3)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
@@ -1112,13 +1163,20 @@ template <> constexpr inline auto chartCheck::qt_create_metaobjectdata<qt_meta_t
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "chartCheck",
-        "checked",
-        ""
+        "update",
+        "",
+        "ind",
+        "ind_y",
+        "checked"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'update'
+        QtMocHelpers::SignalData<void(int, int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 3 }, { QMetaType::Int, 4 },
+        }}),
         // Slot 'checked'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -1142,11 +1200,15 @@ void chartCheck::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     auto *_t = static_cast<chartCheck *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->checked(); break;
+        case 0: _t->update((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 1: _t->checked(); break;
         default: ;
         }
     }
-    (void)_a;
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (chartCheck::*)(int , int )>(_a, &chartCheck::update, 0))
+            return;
+    }
 }
 
 const QMetaObject *chartCheck::metaObject() const
@@ -1168,16 +1230,22 @@ int chartCheck::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 1)
+        if (_id < 2)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 1;
+        _id -= 2;
     }
     return _id;
+}
+
+// SIGNAL 0
+void chartCheck::update(int _t1, int _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
 }
 namespace {
 struct qt_meta_tag_ZN9indyLabelE_t {};
@@ -1257,6 +1325,103 @@ int indyLabel::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         _id -= 1;
     }
     return _id;
+}
+namespace {
+struct qt_meta_tag_ZN11pressChangeE_t {};
+} // unnamed namespace
+
+template <> constexpr inline auto pressChange::qt_create_metaobjectdata<qt_meta_tag_ZN11pressChangeE_t>()
+{
+    namespace QMC = QtMocConstants;
+    QtMocHelpers::StringRefStorage qt_stringData {
+        "pressChange",
+        "edited",
+        "",
+        "coe",
+        "shi",
+        "edit_coeff",
+        "edit_shift"
+    };
+
+    QtMocHelpers::UintData qt_methods {
+        // Signal 'edited'
+        QtMocHelpers::SignalData<void(double, double)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Double, 3 }, { QMetaType::Double, 4 },
+        }}),
+        // Slot 'edit_coeff'
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'edit_shift'
+        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPublic, QMetaType::Void),
+    };
+    QtMocHelpers::UintData qt_properties {
+    };
+    QtMocHelpers::UintData qt_enums {
+    };
+    return QtMocHelpers::metaObjectData<pressChange, qt_meta_tag_ZN11pressChangeE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+            qt_methods, qt_properties, qt_enums);
+}
+Q_CONSTINIT const QMetaObject pressChange::staticMetaObject = { {
+    QMetaObject::SuperData::link<QHBoxLayout::staticMetaObject>(),
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN11pressChangeE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN11pressChangeE_t>.data,
+    qt_static_metacall,
+    nullptr,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN11pressChangeE_t>.metaTypes,
+    nullptr
+} };
+
+void pressChange::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    auto *_t = static_cast<pressChange *>(_o);
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->edited((*reinterpret_cast< std::add_pointer_t<double>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[2]))); break;
+        case 1: _t->edit_coeff(); break;
+        case 2: _t->edit_shift(); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (pressChange::*)(double , double )>(_a, &pressChange::edited, 0))
+            return;
+    }
+}
+
+const QMetaObject *pressChange::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *pressChange::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN11pressChangeE_t>.strings))
+        return static_cast<void*>(this);
+    return QHBoxLayout::qt_metacast(_clname);
+}
+
+int pressChange::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QHBoxLayout::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 3)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 3;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 3)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 3;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void pressChange::edited(double _t1, double _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
 }
 namespace {
 struct qt_meta_tag_ZN4dispE_t {};

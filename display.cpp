@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <fstream>
 #include "display.h"
 #include "datalog.h"
 
@@ -32,7 +33,7 @@ void Log::init() {
 void Log::dtlog() {
 
     datalog(device_data, frq, smp, inp, out, dly, aIn, asp, off, apl, fle, &time, &temp, &measurement, &count);
-    convert_to_pressure(voltages, measurement, &n, &press, &raw);
+    convert_to_pressure(voltages, measurement, &n, &press, &raw, a, b);
     if(temp == -1) {
         temp = last_temp;
     }
@@ -91,7 +92,8 @@ void Chart::updateaxes(int index, int indey) {
     }
     if(ind == 0) {
         if(cnt > 50) {
-            x->setRange(0, cnt+10); 
+            xb = 0;
+            xt = cnt+10;
             for(int i = 951; i < 1000; i++) {
                 pastvals[i-1] = pastvals[i];
             }
@@ -107,14 +109,16 @@ void Chart::updateaxes(int index, int indey) {
     }    
     else if (ind == 1) {
         if(cnt > 50) {
-            x->setRange(cnt-50, cnt+10);
+            xb = cnt-50;
+            xt = cnt+10;
             for(int i = 951; i < 1000; i++) {
                 pastvals[i-1] = pastvals[i];
             }
             pastvals[999] = val;
         } 
         else {
-            x->setRange(0, 50);
+            xb = 0;
+            xt = 50;
             pastvals[950+cnt-1] = val;
         }
         if(ind_y < 1) {
@@ -124,14 +128,16 @@ void Chart::updateaxes(int index, int indey) {
     }
     else if (ind == 2) {
         if(cnt > 100) {
-            x->setRange(cnt-100, cnt+10);
+            xb = cnt-100;
+            xt = cnt+10;
             for(int i = 901; i < 1000; i++) {
                 pastvals[i-1] = pastvals[i];
             }
             pastvals[999] = val;
         } 
         else {
-            x->setRange(0, 100);
+            xb = 0;
+            xt = 100;
             pastvals[900+cnt-1] = val;
         }
         if(ind_y < 1) {
@@ -141,14 +147,16 @@ void Chart::updateaxes(int index, int indey) {
     }
     else if (ind == 3) {
         if(cnt > 1000) {
-            x->setRange(cnt-1000, cnt+10);
+            xb = cnt-1000;
+            xt = cnt+10;
             for(int i = 1; i < 1000; i++) {
                 pastvals[i-1] = pastvals[i];
             }
             pastvals[999] = val;
         } 
         else {
-            x->setRange(0, 1000);
+            xb = 0;
+            xt = 1000;
             pastvals[cnt-1] = val;
         }
         if(ind_y < 1) {
@@ -166,14 +174,16 @@ void Chart::updateaxes(int index, int indey) {
         else {
             pastvals[cnt-1] = val;
         }
-        x->setRange(xb, xt);
     }
+    x->setRange(xb, xt);
     y->setRange(yb, yt);
     
     series->attachAxis(x);
     series->attachAxis(y);
     this->update();
     emit updated(ind, ind_y);
+    emit reset_y(yb, yt, ind_y);
+    emit reset_x(xb, xt, ind-3);
 }
 
 void Chart::updatevals(int count, int value) {
@@ -271,24 +281,50 @@ void Chart::updatecustomy(int ybot, int ytop) {
 }
 
 void Chart::updatecustomx(int xbot, int xtop) {
-    xb = static_cast<double>(xbot);
-    xt = static_cast<double>(xtop);
+    if((xbot > 0) && (xbot < xt)) {
+        xb = static_cast<double>(xbot);
+    }
+    if((xtop > xb)) {
+        xt = static_cast<double>(xtop);
+    }
     updateaxes(-1, -1);
 }
 
-void botEdit::updated(QString raw) {
+void botEdit::updated() {
     bool ok;
-    int val = raw.toInt(&ok);
+    int val = (this->text()).toInt(&ok);
     if(ok) {
         emit update(val, -1);
     }
 }
 
-void topEdit::updated(QString raw) {
+void botEdit::reset(double bot, double top, int aut) {
+    if(aut <= 0) {
+        this->setText("Auto");
+        modifiable = 0;
+    }
+    else if(modifiable == 0){
+        this->setText(QString("%1").arg(bot));
+        modifiable++;
+    }
+}
+
+void topEdit::updated() {
     bool ok;
-    int val = raw.toInt(&ok);
+    int val = (this->text()).toInt(&ok);
     if(ok) {
         emit update(-1, val);
+    }
+}
+
+void topEdit::reset(double bot, double top, int aut) {
+    if(aut <= 0) {
+        this->setText("Auto");
+        modifiable = 0;
+    }
+    else if(modifiable == 0) {
+        this->setText(QString("%1").arg(top));
+        modifiable++;
     }
 }
 
@@ -302,34 +338,84 @@ void chartCheck::checked() {
         state += 2;
     }
     if(state == 1) {
+        c1->ind = xsel->currentIndex();
+        c1->ind_y = ysel->currentIndex();
         this->connect(xsel, &viewSelect::index, c1, &Chart::updateaxes);
         this->connect(ysel, &ySelect::indey, c1, &Chart::updateaxes); 
         this->connect(yb, &botEdit::update, c1, &Chart::updatecustomy);
         this->connect(yt, &topEdit::update, c1, &Chart::updatecustomy); 
+        this->connect(xb, &botEdit::update, c1, &Chart::updatecustomx);
+        this->connect(xt, &topEdit::update, c1, &Chart::updatecustomx);
+        this->connect(this, &chartCheck::update, c1, &Chart::updateaxes);
+        this->connect(c1, &Chart::reset_y, yb, &botEdit::reset);
+        this->connect(c1, &Chart::reset_y, yt, &topEdit::reset);
+        this->connect(c1, &Chart::reset_x, xb, &botEdit::reset);
+        this->connect(c1, &Chart::reset_x, xt, &topEdit::reset);
         this->disconnect(xsel, &viewSelect::index, c2, &Chart::updateaxes);
         this->disconnect(ysel, &ySelect::indey, c2, &Chart::updateaxes);
         this->disconnect(yb, &botEdit::update, c2, &Chart::updatecustomy);
         this->disconnect(yt, &topEdit::update, c2, &Chart::updatecustomy);
+        this->disconnect(xb, &botEdit::update, c2, &Chart::updatecustomx);
+        this->disconnect(xt, &topEdit::update, c2, &Chart::updatecustomx);
+        this->disconnect(this, &chartCheck::update, c2, &Chart::updateaxes);
+        this->disconnect(c2, &Chart::reset_y, yb, &botEdit::reset);
+        this->disconnect(c2, &Chart::reset_y, yt, &topEdit::reset);
+        this->disconnect(c2, &Chart::reset_x, xb, &botEdit::reset);
+        this->disconnect(c2, &Chart::reset_x, xt, &topEdit::reset);
     }
     else if(state == 2) {
+        c2->ind = xsel->currentIndex();
+        c2->ind_y = ysel->currentIndex();
         this->connect(xsel, &viewSelect::index, c2, &Chart::updateaxes);
         this->connect(ysel, &ySelect::indey, c2, &Chart::updateaxes);
         this->connect(yb, &botEdit::update, c2, &Chart::updatecustomy);
         this->connect(yt, &topEdit::update, c2, &Chart::updatecustomy);
+        this->connect(xb, &botEdit::update, c2, &Chart::updatecustomx);
+        this->connect(xt, &topEdit::update, c2, &Chart::updatecustomx);
+        this->connect(this, &chartCheck::update, c2, &Chart::updateaxes);
+        this->connect(c2, &Chart::reset_y, yb, &botEdit::reset);
+        this->connect(c2, &Chart::reset_y, yt, &topEdit::reset);
+        this->connect(c2, &Chart::reset_x, xb, &botEdit::reset);
+        this->connect(c2, &Chart::reset_x, xt, &topEdit::reset);
         this->disconnect(xsel, &viewSelect::index, c1, &Chart::updateaxes);
         this->disconnect(ysel, &ySelect::indey, c1, &Chart::updateaxes);
         this->disconnect(yb, &botEdit::update, c1, &Chart::updatecustomy);
         this->disconnect(yt, &topEdit::update, c1, &Chart::updatecustomy); 
+        this->disconnect(xb, &botEdit::update, c1, &Chart::updatecustomx);
+        this->disconnect(xt, &topEdit::update, c1, &Chart::updatecustomx); 
+        this->disconnect(this, &chartCheck::update, c1, &Chart::updateaxes);
+        this->disconnect(c1, &Chart::reset_y, yb, &botEdit::reset);
+        this->disconnect(c1, &Chart::reset_y, yt, &topEdit::reset);
+        this->disconnect(c1, &Chart::reset_x, xb, &botEdit::reset);
+        this->disconnect(c1, &Chart::reset_x, xt, &topEdit::reset);
     }
     else if(state == 3){
+        c1->ind = xsel->currentIndex();
+        c1->ind_y = ysel->currentIndex();
+        c2->ind = xsel->currentIndex();
+        c2->ind_y = ysel->currentIndex();
         this->connect(xsel, &viewSelect::index, c1, &Chart::updateaxes);
         this->connect(ysel, &ySelect::indey, c1, &Chart::updateaxes);
         this->connect(yb, &botEdit::update, c1, &Chart::updatecustomy);
         this->connect(yt, &topEdit::update, c1, &Chart::updatecustomy);
+        this->connect(xb, &botEdit::update, c1, &Chart::updatecustomx);
+        this->connect(xt, &topEdit::update, c1, &Chart::updatecustomx);
+        this->connect(this, &chartCheck::update, c1, &Chart::updateaxes);
+        this->connect(c1, &Chart::reset_y, yb, &botEdit::reset);
+        this->connect(c1, &Chart::reset_y, yt, &topEdit::reset);
+        this->connect(c1, &Chart::reset_x, xb, &botEdit::reset);
+        this->connect(c1, &Chart::reset_x, xt, &topEdit::reset);
         this->connect(xsel, &viewSelect::index, c2, &Chart::updateaxes);
         this->connect(ysel, &ySelect::indey, c2, &Chart::updateaxes);
         this->connect(yb, &botEdit::update, c2, &Chart::updatecustomy);
         this->connect(yt, &topEdit::update, c2, &Chart::updatecustomy);
+        this->connect(xb, &botEdit::update, c2, &Chart::updatecustomx);
+        this->connect(xt, &topEdit::update, c2, &Chart::updatecustomx);
+        this->connect(this, &chartCheck::update, c2, &Chart::updateaxes);
+        this->connect(c2, &Chart::reset_y, yb, &botEdit::reset);
+        this->connect(c2, &Chart::reset_y, yt, &topEdit::reset);
+        this->connect(c2, &Chart::reset_x, xb, &botEdit::reset);
+        this->connect(c2, &Chart::reset_x, xt, &topEdit::reset);
     }
     else {
         this->disconnect(xsel, &viewSelect::index, c1, &Chart::updateaxes);
@@ -340,7 +426,42 @@ void chartCheck::checked() {
         this->disconnect(yt, &topEdit::update, c1, &Chart::updatecustomy);
         this->disconnect(yb, &botEdit::update, c2, &Chart::updatecustomy);
         this->disconnect(yt, &topEdit::update, c2, &Chart::updatecustomy);
+        this->disconnect(xb, &botEdit::update, c1, &Chart::updatecustomx);
+        this->disconnect(xt, &topEdit::update, c1, &Chart::updatecustomx);
+        this->disconnect(xb, &botEdit::update, c2, &Chart::updatecustomx);
+        this->disconnect(xt, &topEdit::update, c2, &Chart::updatecustomx);
+        this->disconnect(this, &chartCheck::update, c1, &Chart::updateaxes);
+        this->disconnect(this, &chartCheck::update, c2, &Chart::updateaxes);
+        this->disconnect(c1, &Chart::reset_y, yb, &botEdit::reset);
+        this->disconnect(c1, &Chart::reset_y, yt, &topEdit::reset);
+        this->disconnect(c1, &Chart::reset_x, xb, &botEdit::reset);
+        this->disconnect(c1, &Chart::reset_x, xt, &topEdit::reset);
+        this->disconnect(c2, &Chart::reset_y, yb, &botEdit::reset);
+        this->disconnect(c2, &Chart::reset_y, yt, &topEdit::reset);
+        this->disconnect(c2, &Chart::reset_x, xb, &botEdit::reset);
+        this->disconnect(c2, &Chart::reset_x, xt, &topEdit::reset);
     }
+    emit update(-1, -1);
+}
+
+void pressChange::edit_coeff() {
+    bool ok;
+    coeff = (coedit->text()).toDouble(&ok);
+    if(ok) {
+        ofstream output(fle);
+        output << coeff << "\n" << shift; 
+    }
+    emit edited(coeff, shift);
+}
+
+void pressChange::edit_shift() {
+    bool ok;
+    shift = (shedit->text()).toDouble(&ok);
+    if(ok) {
+        ofstream output(fle);
+        output << coeff << "\n" << shift; 
+    }
+    emit edited(coeff, shift);
 }
 
 void indyLabel::update(int ex, int ind_y) {
@@ -348,7 +469,19 @@ void indyLabel::update(int ex, int ind_y) {
     setText(QString("Ind_y: %1").arg(indy));
 }
 
+void Log::change_curve(double coeff, double shift) {
+    a = coeff;
+    b = shift;
+}
+
 int display(int argc, char *argv[], string name, int config, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename) {
+    ifstream input("pressure.txt"); //current defaults are coeff (press_a) = 6.33, shift (press_b) = -8.82
+    string str;
+    getline(input, str);
+    double press_a = stod(str);
+    getline(input, str);
+    double press_b = stod(str);
+    
     QApplication app(argc, argv);
     QWidget window;
     window.resize(1500, 750);
@@ -364,6 +497,9 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     QHBoxLayout *yedit = new QHBoxLayout();
     QHBoxLayout *ybot = new QHBoxLayout();
     QHBoxLayout *ytop = new QHBoxLayout();
+    QHBoxLayout *xedit = new QHBoxLayout();
+    QHBoxLayout *xbot = new QHBoxLayout();
+    QHBoxLayout *xtop = new QHBoxLayout();
     QHBoxLayout *check = new QHBoxLayout();
 
     //add vertical layouts to larger horizontal layout
@@ -377,7 +513,7 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     Save *save = new Save();
 
-    Log *log = new Log(name, config, out_freq, sample_rate, chI, chO, del, achI, asr, offset, amp, return_filename(save->filename));
+    Log *log = new Log(name, config, out_freq, sample_rate, chI, chO, del, achI, asr, offset, amp, return_filename(save->filename), press_a, press_b);
 
     QPushButton *start = new QPushButton("Start Logging");
 
@@ -413,6 +549,8 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
 
     indyLabel *funny = new indyLabel();
 
+    pressChange *pchange = new pressChange(press_a, press_b, "pressure.txt");
+
     disp *dis = new disp(log);
     dis->setParent(&window);
 
@@ -426,6 +564,8 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     v1->addLayout(ylayout, 7);
     v1->addLayout(check, 8);
     v1->addLayout(yedit, 9);
+    v1->addLayout(xedit, 10);
+    v1->addLayout(pchange, 11);
     v1->addSpacing(400);
     
     hori.addWidget(view, 0, 1, 2, 5);
@@ -453,6 +593,15 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     ytop->addWidget(ytlabel, 0);
     ytop->addWidget(ytedit, 1);
 
+    xedit->addLayout(xbot, 0);
+    xedit->addLayout(xtop, 1);
+    
+    xbot->addWidget(xblabel, 0);
+    xbot->addWidget(xbedit, 1);
+    
+    xtop->addWidget(xtlabel, 0);
+    xtop->addWidget(xtedit, 1);
+
     QObject::connect(start, &QPushButton::clicked, dis, &disp::startButtonPressed);
     QObject::connect(log, &Log::temp_updated, temp, &Label::update);
     QObject::connect(log, &Log::press_updated, press, &Label::update);
@@ -464,10 +613,13 @@ int display(int argc, char *argv[], string name, int config, double out_freq, do
     QObject::connect(xsel, &QComboBox::currentIndexChanged, xsel, &viewSelect::changed);
     QObject::connect(ysel, &QComboBox::currentIndexChanged, ysel, &ySelect::changed);
     //QObject::connect(chart, &Chart::updated, funny, &indyLabel::update);
-    QObject::connect(ybedit, &QLineEdit::textChanged, ybedit, &botEdit::updated);
-    QObject::connect(ytedit, &QLineEdit::textChanged, ytedit, &topEdit::updated);
+    QObject::connect(ybedit, &QLineEdit::returnPressed, ybedit, &botEdit::updated);
+    QObject::connect(ytedit, &QLineEdit::returnPressed, ytedit, &topEdit::updated);
+    QObject::connect(xbedit, &QLineEdit::returnPressed, xbedit, &botEdit::updated);
+    QObject::connect(xtedit, &QLineEdit::returnPressed, xtedit, &topEdit::updated);
     QObject::connect(ref, &QComboBox::currentIndexChanged, ref, &refreshSelect::changed);
     QObject::connect(ref, &refreshSelect::refresh_rate, log, &Log::refresh_change);
+    QObject::connect(pchange, &pressChange::edited, log, &Log::change_curve);
     //QObject::connect(ybedit, &botEdit::update, chart, &Chart::updatecustomy);
     //QObject::connect(ytedit, &topEdit::update, chart, &Chart::updatecustomy); 
     //QObject::connect(chart, &Chart::updated, scene, &Scene::redraw);

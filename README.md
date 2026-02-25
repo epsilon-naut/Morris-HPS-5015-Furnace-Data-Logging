@@ -8,7 +8,7 @@ Tool for extracting and logging pressure and temperature data for the Morris HPS
 ## Features
 - Analog pressure data acquisition
 - Digital temperature data acquisition
-- Writing pressure and temperature data to CSV files for further analysis
+- Ability to write pressure and temperature data to CSV files for further analysis
 - Visual real-time display of pressure and temperature data
 
 ## Languages / Packages Used

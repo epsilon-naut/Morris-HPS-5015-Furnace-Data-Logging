@@ -3,6 +3,8 @@
 ## Overview
 Tool for extracting and logging pressure and temperature data for the Morris HPS-5015 Oxygen Furnace.
 
+<img width="1918" height="1015" alt="Data Logger 5" src="https://github.com/user-attachments/assets/ede8ed32-12d4-4307-916f-acf6dcf952f5" />
+
 ## Features
 - Analog pressure data acquisition
 - Digital temperature data acquisition

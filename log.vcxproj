@@ -413,7 +413,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\display.cpp" />
     <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\main.cpp" />
     <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\datalog.cpp" />
     <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\log_autogen\mocs_compilation_Release.cpp">

@@ -367,12 +367,6 @@
 			"MU",
 			"EWIEGA46WW/moc_datalog.cpp",
 			null
-		],
-		[
-			"C:/Users/Jeff/Documents/Research/HPS5015/code/display.h",
-			"MU",
-			"EWIEGA46WW/moc_display.cpp",
-			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -557,11 +551,6 @@
 	[
 		[
 			"C:/Users/Jeff/Documents/Research/HPS5015/code/datalog.cpp",
-			"MU",
-			null
-		],
-		[
-			"C:/Users/Jeff/Documents/Research/HPS5015/code/display.cpp",
 			"MU",
 			null
 		],

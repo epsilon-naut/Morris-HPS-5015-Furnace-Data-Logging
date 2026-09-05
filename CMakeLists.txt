@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts) 
 qt_standard_project_setup()
 
-qt_add_executable(log display.cpp main.cpp datalog.cpp)
+qt_add_executable(log main.cpp datalog.cpp)
 
 target_include_directories(log PRIVATE Qt6 WF_SDK)
 target_link_libraries(log PRIVATE Qt6::Widgets Qt6::Charts "C:/Program Files (x86)/Digilent/WaveFormsSDK/lib/x64/dwf.lib")

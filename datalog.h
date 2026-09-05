@@ -63,4 +63,6 @@ void close_device(void *device_data);
 
 void datalog(void *device_data, double out_freq, double sample_rate, int chI, int chO, int del, int achI, int asr, double offset, double amp, string filename, char **ti, int *te, double *me, int *co);
 
+void req_press(wf::Device::Data *device_data, int chI, double sample_rate, double offset, double amp, double *m);
+
 #endif

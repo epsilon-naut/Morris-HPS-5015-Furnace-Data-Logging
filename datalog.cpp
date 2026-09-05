@@ -1,3 +1,4 @@
+#define _GLIBCXX_USE_CXX11_ABI 0
 #include "WF_SDK/WF_SDK.h"
 #include "datalog.h"
 #include <stdio.h>
@@ -272,8 +273,8 @@ void req_temp(wf::Device::Data *device_data, int chI, int chO, double freq, doub
 
     FDwfDigitalOutDataSet(device_data->handle, chO, send, 96);
     FDwfDigitalOutConfigure(device_data->handle, 1);
-    vector<unsigned short> input = logic.record(device_data, chI);
-
+    //vector<unsigned short> input = logic.record(device_data, chI);
+    /*
     *t = -1;
 
     for(int i = 0; i < input.size()/10; i++) {
@@ -304,6 +305,7 @@ void req_temp(wf::Device::Data *device_data, int chI, int chO, double freq, doub
         }
         
     }
+    */
     free(send);
 }
 
@@ -352,10 +354,10 @@ void start_device(string name, int config, double sample_rate, int chI, double o
 
     // start digital logic analyzer and pattern generator
     logic.open(device_data, sample_rate, 120);
-    logic.trigger(device_data, 1, chI, 0, 0, 0, 0, 20, 0);
+    logic.trigger(device_data, 1, chI, 0, 0, false, 0, 20, 1);
 
     // start the scope
-    scope.open(device_data, sample_rate, max_buf, offset, amp);
+    scope.open(device_data, 20000000, max_buf, offset, amp);
 
     *dev = device_data;
 }
@@ -388,7 +390,7 @@ void datalog(void *device_data, double out_freq, double sample_rate, int chI, in
     double measurement;
     
     req_time(&time);
-    req_temp((Device::Data *)device_data, chI, chO, out_freq, sample_rate, &temp);
+    //req_temp((Device::Data *)device_data, chI, chO, out_freq, sample_rate, &temp);
     req_press((Device::Data *)device_data, achI, asr, offset, amp, &measurement);
     *ti = asctime(time);
     (*ti)[24] = '\0';

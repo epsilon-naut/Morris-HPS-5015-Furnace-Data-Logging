@@ -4,9 +4,6 @@
     <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\log_autogen\mocs_compilation_Debug.cpp">
       <Filter>Source Files\Generated</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\display.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="C:\Users\Jeff\Documents\Research\HPS5015\code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
